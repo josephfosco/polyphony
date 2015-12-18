@@ -13,24 +13,12 @@
 ;    You should have received a copy of the GNU General Public License
 ;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns polyphony.variables)
+(ns polyphony.node-tree)
 
-(def all-variables (atom {}))
+(def all-conds (atom {}))
+(def all-nodes (atom {}))
 
-(defn- new-variable
-  [cur-variables variable-name clause-id]
-  (assoc cur-variables
-    (keyword (name variable-name))
-    (conj ((keyword (name variable-name)) cur-variables) (keyword clause-id)))
-  )
-
-(defn add-variable
-  [variable-name clause-id]
-  (println "add-variable")
-  (swap! all-variables new-variable variable-name clause-id)
-  )
-
-(defn get-variable
-  [variable-name]
-  nil
+(defn add-cond
+  [new-cond]
+  (swap! all-conds assoc (keyword  (:id new-cond)) new-cond)
   )

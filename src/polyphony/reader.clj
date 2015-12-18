@@ -15,6 +15,8 @@
 
 (ns polyphony.reader
   (:require
+   [polyphony.condnode :refer [create-cond-node]]
+   [polyphony.node-tree :refer [add-cond]]
    [polyphony.variables :refer [add-variable]]
    )
   )
@@ -38,6 +40,9 @@
 (defmacro defrule
   [cond-clause rslt-clause]
   `(let [cond-ids# '~(for [clause cond-clause] (list (gensym 'C_) clause))]
+     (dorun (map add-cond (map create-cond-node
+                               (map first cond-ids#)
+                               (map second cond-ids#))))
      (dorun (map create-variables (map first cond-ids#) (map second cond-ids#)))
      )
   )

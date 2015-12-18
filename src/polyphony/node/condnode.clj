@@ -15,10 +15,10 @@
 
 (ns polyphony.condnode)
 
-(defrecord CondNode [id cond-clause variables output])
+(defrecord CondNode [id cond-clause variables outputs])
 
 (defn create-cond-node
-  "Used to create a new join-node"
-  [& {:keys [id clause]}]
-  (CondNode. id clause)
+  "Used to create a new cond-node"
+  [id clause]
+  (CondNode. id clause nil nil)
   )
