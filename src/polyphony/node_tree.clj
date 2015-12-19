@@ -22,3 +22,15 @@
   [new-cond]
   (swap! all-conds assoc (keyword  (:id new-cond)) new-cond)
   )
+
+(defn find-id-for-clause
+  [clause]
+  (let [all-clauses (dorun (for [cond-node (vals @all-conds)] (:cond-clause cond-node)))
+        id (first (for [cond-node (vals @all-conds)
+                        :when (= clause (:cond-clause cond-node))]
+                    (:id cond-node)))]
+    (println "*********** all-clauses: " all-clauses)
+    (println "*********** id: " id)
+    id
+    )
+  )

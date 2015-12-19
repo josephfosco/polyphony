@@ -13,7 +13,7 @@
 ;    You should have received a copy of the GNU General Public License
 ;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns polyphony.joinnode)
+(ns polyphony.node.joinnode)
 
 (defrecord JoinNode [left-input left-input-status right-input right-input-status output])
 

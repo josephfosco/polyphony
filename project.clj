@@ -15,7 +15,7 @@
 
 (defproject polyphony "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :url "https://github.com/josephfosco/polyphony"
   :license {:name "GNU General Public License version 3"
             :url "http://www.gnu.org/licenses/"}
   :dependencies [[org.clojure/clojure "1.5.1"]])

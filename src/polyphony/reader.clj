@@ -15,8 +15,8 @@
 
 (ns polyphony.reader
   (:require
-   [polyphony.condnode :refer [create-cond-node]]
-   [polyphony.node-tree :refer [add-cond]]
+   [polyphony.node.condnode :refer [create-cond-node]]
+   [polyphony.node-tree :refer [add-cond find-id-for-clause]]
    [polyphony.variables :refer [add-variable]]
    )
   )
@@ -44,5 +44,6 @@
                                (map first cond-ids#)
                                (map second cond-ids#))))
      (dorun (map create-variables (map first cond-ids#) (map second cond-ids#)))
+     (dorun (map find-id-for-clause (map second cond-ids#)))
      )
   )
