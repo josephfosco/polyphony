@@ -38,12 +38,15 @@
   )
 
 (defmacro defrule
-  [cond-clause rslt-clause]
-  `(let [cond-ids# '~(for [clause cond-clause] (list (gensym 'C_) clause))]
+  [cond-clauses rslt-clause]
+  `(let [existing-conds# '~(map find-id-for-clause cond-clauses)
+         cond-ids# '~(for [clause cond-clauses] (list (gensym 'C_) clause))]
+     ;;(doall (map find-id-for-clause (map second cond-ids#)))
      (dorun (map add-cond (map create-cond-node
                                (map first cond-ids#)
                                (map second cond-ids#))))
      (dorun (map create-variables (map first cond-ids#) (map second cond-ids#)))
-     (dorun (map find-id-for-clause (map second cond-ids#)))
+     (println)
+     (println "existing-conds: " existing-conds#)
      )
   )
