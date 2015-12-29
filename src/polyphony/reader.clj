@@ -37,16 +37,33 @@
      ))
   )
 
+(defn get-existing-conds
+  [cond-clauses]
+  (filter #(not (nil? %)) (map find-id-for-clause cond-clauses))
+  )
+
+(defn new-clause
+  [clauses]
+  (filter #(not (nil? %))
+          (map  #(when (not (find-id-for-clause %))
+                   (list (gensym 'C_) %)
+                   ) clauses))
+  )
+
 (defmacro defrule
-  [cond-clauses rslt-clause]
-  `(let [existing-conds# '~(map find-id-for-clause cond-clauses)
-         cond-ids# '~(for [clause cond-clauses] (list (gensym 'C_) clause))]
-     ;;(doall (map find-id-for-clause (map second cond-ids#)))
+  [cond-clauses rslt-clauses]
+  (let [existing-conds (get-existing-conds cond-clauses)
+         new-conds (new-clause cond-clauses)
+         ]
+
+    (println)
+    (println "existing-conds: " existing-conds)
+    (println "new-conds: " new-conds)
+    (println)
+
      (dorun (map add-cond (map create-cond-node
-                               (map first cond-ids#)
-                               (map second cond-ids#))))
-     (dorun (map create-variables (map first cond-ids#) (map second cond-ids#)))
-     (println)
-     (println "existing-conds: " existing-conds#)
+                               (map first new-conds)
+                               (map second new-conds))))
+     (dorun (map create-variables (map first new-conds) (map second new-conds)))
      )
   )

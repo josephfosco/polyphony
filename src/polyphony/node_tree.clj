@@ -25,9 +25,8 @@
 
 (defn find-id-for-clause
   [clause]
-  (println clause)
-  (let [id (first (for [cond-node (vals @all-conds)
+  (let [id-and-clause (first (for [cond-node (vals @all-conds)
                         :when (= clause (:cond-clause cond-node))]
-                    (:id cond-node)))]
-    id)
+                    (list (:id cond-node) clause)))]
+    id-and-clause)
   )
