@@ -16,14 +16,14 @@
 (ns polyphony.reader
   (:require
    [polyphony.node.condnode :refer [create-cond-node]]
-   [polyphony.node-tree :refer [add-cond find-id-for-clause]]
+   [polyphony.node.joinnode :refer [create-join-node set-output]]
+   [polyphony.node-tree :refer [add-cond find-id-for-clause add-join set-cond-node-output]]
    [polyphony.variables :refer [add-variable]]
    )
   )
 
 (defn create-variables
   [clause-id clause]
-  (println "create_variables")
   (println clause-id clause)
 
   (dorun
@@ -47,7 +47,43 @@
   (filter #(not (nil? %))
           (map  #(when (not (find-id-for-clause %))
                    (list (gensym 'C_) %)
-                   ) clauses))
+                   )
+                clauses))
+  )
+(defn- create-joins
+  [join-node clauses]
+  (println "create-joins " join-node clauses)
+  (let [new-join (when (> (count clauses) 1)
+                   (create-join-node (first (first clauses))))]
+    (cond (and (nil? join-node) new-join)
+          (do
+            (add-join new-join)
+            (set-cond-node-output (first (first clauses)) (:id new-join))
+            (recur new-join (rest clauses))
+            )
+          )
+    )
+  )
+
+(defn- graph-cond-clauses
+  [cond-clauses]
+
+  (if (= (count cond-clauses) 1)
+    (first cond-clauses)
+    (create-joins nil cond-clauses)
+    )
+
+  (comment
+    if 1 clause and no join clause return clause
+    if 1 clause and join cluse and make clause input of join clause
+        return join clause
+    if no join clause (**first time**)  then add join clause with
+        first clause as input
+        remove first clause loop rest of clauses and join clause
+    join first clause with join clause create new join clause woth
+        old join clause as input
+    )
+
   )
 
 (defmacro defrule
@@ -61,9 +97,10 @@
     (println "new-conds: " new-conds)
     (println)
 
-     (dorun (map add-cond (map create-cond-node
-                               (map first new-conds)
-                               (map second new-conds))))
-     (dorun (map create-variables (map first new-conds) (map second new-conds)))
+    (dorun (map add-cond (map create-cond-node new-conds)))
+    (dorun (map create-variables (map first new-conds) (map second new-conds)))
+    (graph-cond-clauses (into existing-conds new-conds))
+
+
      )
   )

@@ -13,14 +13,23 @@
 ;    You should have received a copy of the GNU General Public License
 ;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns polyphony.node-tree)
+(ns polyphony.node-tree
+  (:require
+   [polyphony.node.condnode  :refer  [set-output-for-cond]]
+   )
+  )
 
 (def all-conds (atom {}))
-(def all-nodes (atom {}))
+(def all-joins (atom {}))
 
 (defn add-cond
   [new-cond]
   (swap! all-conds assoc (keyword  (:id new-cond)) new-cond)
+  )
+
+(defn add-join
+  [new-join]
+  (swap! all-joins assoc (keyword  (:id new-join)) new-join)
   )
 
 (defn find-id-for-clause
@@ -29,4 +38,16 @@
                         :when (= clause (:cond-clause cond-node))]
                     (list (:id cond-node) clause)))]
     id-and-clause)
+  )
+
+(defn- set-cn-output
+  [cur-cond-nodes cond-node-id output-id]
+  (assoc cur-cond-nodes
+    (keyword cond-node-id)
+    (set-output-for-cond ((keyword cond-node-id) cur-cond-nodes) output-id))
+  )
+
+(defn set-cond-node-output
+  [cond-node-id output-id]
+  (swap! all-conds set-cn-output cond-node-id output-id)
   )

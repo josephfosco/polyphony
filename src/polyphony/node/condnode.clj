@@ -18,7 +18,14 @@
 (defrecord CondNode [id cond-clause variables outputs])
 
 (defn create-cond-node
-  "Used to create a new cond-node"
-  [id clause]
-  (CondNode. id clause nil nil)
+  "Used to create a new cond-node
+
+   id-and-clause - a list with the first element the id for the
+                   clause, and the second element the clause"
+  [id-and-clause]
+  (CondNode. (first id-and-clause) (second id-and-clause) nil '())
+  )
+(defn set-output-for-cond
+  [cond-node output-id]
+  (assoc cond-node :outputs (conj (:outputs cond-node) output-id ))
   )
