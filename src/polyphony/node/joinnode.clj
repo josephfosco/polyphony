@@ -24,8 +24,9 @@
   (JoinNode. (gensym 'J_) left-input-id false nil false nil)
   )
 
-(defn set-right-input
-  [input-node-id]
+(defn set-join-right-input
+  [join-node right-input-id]
+  (assoc join-node :right-input-id right-input-id :right-input-status false)
   )
 
 (defn set-output

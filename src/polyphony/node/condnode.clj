@@ -25,7 +25,7 @@
   [id-and-clause]
   (CondNode. (first id-and-clause) (second id-and-clause) nil '())
   )
-(defn set-output-for-cond
+(defn set-cond-output
   [cond-node output-id]
   (assoc cond-node :outputs (conj (:outputs cond-node) output-id ))
   )

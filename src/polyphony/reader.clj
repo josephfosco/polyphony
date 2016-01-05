@@ -17,7 +17,8 @@
   (:require
    [polyphony.node.condnode :refer [create-cond-node]]
    [polyphony.node.joinnode :refer [create-join-node set-output]]
-   [polyphony.node-tree :refer [add-cond find-id-for-clause add-join set-cond-node-output]]
+   [polyphony.node-tree :refer [add-cond find-id-for-clause add-join set-cond-node-output
+                                set-join-node-right-input]]
    [polyphony.variables :refer [add-variable]]
    )
   )
@@ -53,14 +54,22 @@
 (defn- create-joins
   [join-node clauses]
   (println "create-joins " join-node clauses)
-  (let [new-join (when (> (count clauses) 1)
-                   (create-join-node (first (first clauses))))]
+  (let [new-join (when (seq clauses)
+                   (create-join-node (ffirst clauses)))]
     (cond (and (nil? join-node) new-join)
           (do
+            ;; first time add first 2 clauses to join
             (add-join new-join)
-            (set-cond-node-output (first (first clauses)) (:id new-join))
-            (recur new-join (rest clauses))
+            (set-join-node-right-input (:id new-join) (first (second clauses)))
+            (set-cond-node-output (ffirst clauses) (:id new-join))
+            (recur new-join (rest (rest clauses)))
             )
+          new-join
+          (do
+            (add-join new-join)
+            (set-cond-node-output (ffirst clauses) (:id new-join))
+            (set-join-node-right-input (:id new-join) (:id join-node))
+            (recur new-join (rest clauses)))
           )
     )
   )
@@ -74,13 +83,13 @@
     )
 
   (comment
-    if 1 clause and no join clause return clause
+    **if 1 clause and no join clause return clause
     if 1 clause and join cluse and make clause input of join clause
         return join clause
-    if no join clause (**first time**)  then add join clause with
+    **if no join clause (**first time**)  then add join clause with
         first clause as input
         remove first clause loop rest of clauses and join clause
-    join first clause with join clause create new join clause woth
+    **join first clause with join clause create new join clause woth
         old join clause as input
     )
 
