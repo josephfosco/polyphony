@@ -56,15 +56,19 @@
   (println "create-joins " join-node clauses)
   (let [new-join (when (seq clauses)
                    (create-join-node (ffirst clauses)))]
-    (cond (and (nil? join-node) new-join)
+    (cond (nil? new-join)
+          ;; no more clauses, return last join
+          join-node
+          (and (nil? join-node) new-join)
+          ;; first time add first 2 clauses to join
           (do
-            ;; first time add first 2 clauses to join
             (add-join new-join)
             (set-join-node-right-input (:id new-join) (first (second clauses)))
             (set-cond-node-output (ffirst clauses) (:id new-join))
             (recur new-join (rest (rest clauses)))
             )
-          new-join
+          :else
+          ;; add join-node and first clause to new-join
           (do
             (add-join new-join)
             (set-cond-node-output (ffirst clauses) (:id new-join))
@@ -76,23 +80,10 @@
 
 (defn- graph-cond-clauses
   [cond-clauses]
-
   (if (= (count cond-clauses) 1)
     (first cond-clauses)
     (create-joins nil cond-clauses)
     )
-
-  (comment
-    **if 1 clause and no join clause return clause
-    if 1 clause and join cluse and make clause input of join clause
-        return join clause
-    **if no join clause (**first time**)  then add join clause with
-        first clause as input
-        remove first clause loop rest of clauses and join clause
-    **join first clause with join clause create new join clause woth
-        old join clause as input
-    )
-
   )
 
 (defmacro defrule
