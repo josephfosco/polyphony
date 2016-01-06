@@ -16,9 +16,10 @@
 (ns polyphony.reader
   (:require
    [polyphony.node.condnode :refer [create-cond-node]]
-   [polyphony.node.joinnode :refer [create-join-node set-join-output]]
+   [polyphony.node.joinnode :refer [create-join-node]]
    [polyphony.node-tree :refer [add-cond find-id-for-clause add-join set-cond-node-output
-                                set-join-node-right-input add-result]]
+                                set-join-node-output set-join-node-right-input
+                                add-result]]
    [polyphony.node.resultnode :refer [create-result-node]]
    [polyphony.variables :refer [add-variable]]
    )
@@ -54,28 +55,30 @@
   )
 
 (defn- create-joins
-  [join-node clauses]
-  (println "create-joins " join-node clauses)
+  [join-node-id clauses]
+  (println "create-joins " join-node-id clauses)
   (let [new-join (when (seq clauses)
                    (create-join-node (ffirst clauses)))]
     (cond (nil? new-join)
           ;; no more clauses, return last join
-          join-node
-          (and (nil? join-node) new-join)
+          join-node-id
+          (and (nil? join-node-id) new-join)
           ;; first time add first 2 clauses to join
           (do
             (add-join new-join)
             (set-join-node-right-input (:id new-join) (first (second clauses)))
             (set-cond-node-output (ffirst clauses) (:id new-join))
-            (recur new-join (rest (rest clauses)))
+            (set-cond-node-output (first (second clauses)) (:id new-join))
+            (recur (:id new-join) (rest (rest clauses)))
             )
           :else
           ;; add join-node and first clause to new-join
           (do
             (add-join new-join)
             (set-cond-node-output (ffirst clauses) (:id new-join))
-            (set-join-node-right-input (:id new-join) (:id join-node))
-            (recur new-join (rest clauses)))
+            (set-join-node-right-input (:id new-join) join-node-id)
+            (set-join-node-output join-node-id (:id new-join))
+            (recur (:id new-join) (rest clauses)))
           )
     )
   )
@@ -84,7 +87,7 @@
   [cond-clauses]
   (if (= (count cond-clauses) 1)
     (ffirst cond-clauses)
-    (:id (create-joins nil cond-clauses))
+    (create-joins nil cond-clauses)
     )
   )
 
