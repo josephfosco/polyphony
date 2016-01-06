@@ -16,9 +16,10 @@
 (ns polyphony.reader
   (:require
    [polyphony.node.condnode :refer [create-cond-node]]
-   [polyphony.node.joinnode :refer [create-join-node set-output]]
+   [polyphony.node.joinnode :refer [create-join-node set-join-output]]
    [polyphony.node-tree :refer [add-cond find-id-for-clause add-join set-cond-node-output
-                                set-join-node-right-input]]
+                                set-join-node-right-input add-result]]
+   [polyphony.node.resultnode :refer [create-result-node]]
    [polyphony.variables :refer [add-variable]]
    )
   )
@@ -51,6 +52,7 @@
                    )
                 clauses))
   )
+
 (defn- create-joins
   [join-node clauses]
   (println "create-joins " join-node clauses)
@@ -81,9 +83,14 @@
 (defn- graph-cond-clauses
   [cond-clauses]
   (if (= (count cond-clauses) 1)
-    (first cond-clauses)
-    (create-joins nil cond-clauses)
+    (ffirst cond-clauses)
+    (:id (create-joins nil cond-clauses))
     )
+  )
+
+(defn- graph-result-clauses
+  [rslt-clauses input-clause-id]
+  (add-result (create-result-node input-clause-id rslt-clauses))
   )
 
 (defmacro defrule
@@ -99,8 +106,7 @@
 
     (dorun (map add-cond (map create-cond-node new-conds)))
     (dorun (map create-variables (map first new-conds) (map second new-conds)))
-    (graph-cond-clauses (into existing-conds new-conds))
-
-
+    (graph-result-clauses rslt-clauses
+                          (graph-cond-clauses (into existing-conds new-conds)))
      )
   )

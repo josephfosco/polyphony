@@ -16,12 +16,13 @@
 (ns polyphony.node-tree
   (:require
    [polyphony.node.condnode  :refer  [set-cond-output]]
-   [polyphony.node.joinnode  :refer  [set-join-right-input]]
+   [polyphony.node.joinnode  :refer  [set-join-output set-join-right-input]]
    )
   )
 
 (def all-conds (atom {}))
 (def all-joins (atom {}))
+(def all-results (atom {}))
 
 (defn add-cond
   [new-cond]
@@ -31,6 +32,11 @@
 (defn add-join
   [new-join]
   (swap! all-joins assoc (keyword  (:id new-join)) new-join)
+  )
+
+(defn add-result
+  [new-result]
+  (swap! all-results assoc (keyword  (:id new-result)) new-result)
   )
 
 (defn find-id-for-clause
@@ -51,6 +57,18 @@
 (defn set-cond-node-output
   [cond-node-id output-id]
   (swap! all-conds set-cn-output cond-node-id output-id)
+  )
+
+(defn- set-jn-output
+  [cur-join-nodes join-node-id output-id]
+  (assoc cur-join-nodes
+    (keyword join-node-id)
+    (set-join-output ((keyword join-node-id) cur-join-nodes) output-id))
+  )
+
+(defn set-join-node-output
+  [join-node-id output-id]
+  (swap! all-joins set-jn-output join-node-id output-id)
   )
 
 (defn- set-jn-right

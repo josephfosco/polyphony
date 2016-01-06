@@ -13,23 +13,12 @@
 ;    You should have received a copy of the GNU General Public License
 ;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns polyphony.node.joinnode)
+(ns polyphony.node.resultnode)
 
-(defrecord JoinNode [id left-input-id left-input-status right-input-id right-input-status output-id])
+(defrecord ResultNode [id input-id input-status result-clauses variables])
 
-(defn create-join-node
-  "Used to create a new join-node"
-  [left-input-id]
-  (println "create-join-node left-input-id:" left-input-id)
-  (JoinNode. (gensym 'J_) left-input-id false nil false nil)
-  )
-
-(defn set-join-right-input
-  [join-node right-input-id]
-  (assoc join-node :right-input-id right-input-id :right-input-status false)
-  )
-
-(defn set-join-output
-  [join-node output-node-id]
-  (assoc join-node :output-id output-node-id)
+(defn create-result-node
+  "Used to create a new result-node"
+  [input-id rslt-clauses]
+  (ResultNode. (gensym 'R_) input-id false rslt-clauses '())
   )
