@@ -1,4 +1,4 @@
-;    Copyright (C) 2015  Joseph Fosco. All Rights Reserved
+;    Copyright (C) 2015-2016  Joseph Fosco. All Rights Reserved
 ;
 ;    This program is free software: you can redistribute it and/or modify
 ;    it under the terms of the GNU General Public License as published by
@@ -93,7 +93,16 @@
 
 (defn- graph-result-clauses
   [rslt-clauses input-clause-id]
-  (add-result (create-result-node input-clause-id rslt-clauses))
+  (let [rslt (create-result-node input-clause-id rslt-clauses)]
+    (add-result rslt)
+    (cond (.startsWith (name input-clause-id) "C")
+          (set-cond-node-output input-clause-id (:id rslt))
+          (.startsWith (name input-clause-id) "J")
+          (set-join-node-output input-clause-id (:id rslt))
+          :else
+          (throw (Throwable. "InvalidNodeId"))
+          )
+    )
   )
 
 (defmacro defrule
