@@ -1,4 +1,4 @@
-;    Copyright (C) 2015  Joseph Fosco. All Rights Reserved
+;    Copyright (C) 2015-2016  Joseph Fosco. All Rights Reserved
 ;
 ;    This program is free software: you can redistribute it and/or modify
 ;    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 
 (ns polyphony.node-tree
   (:require
-   [polyphony.node.condnode  :refer  [set-cond-output]]
+   [polyphony.node.condnode  :refer  [set-cond-output set-cond-variables]]
    [polyphony.node.joinnode  :refer  [set-join-output set-join-right-input]]
    )
   )
@@ -57,6 +57,18 @@
 (defn set-cond-node-output
   [cond-node-id output-id]
   (swap! all-conds set-cn-output cond-node-id output-id)
+  )
+
+(defn- set-cn-variables
+  [cur-cond-nodes cond-node-id variable-list]
+  (assoc cur-cond-nodes
+    (keyword cond-node-id)
+    (set-cond-variables ((keyword cond-node-id) cur-cond-nodes) variable-list))
+  )
+
+(defn set-cond-node-variables
+  [cond-node-id variable-list]
+  (swap! all-conds set-cn-variables cond-node-id variable-list)
   )
 
 (defn- set-jn-output

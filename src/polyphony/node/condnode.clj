@@ -1,4 +1,4 @@
-;    Copyright (C) 2015  Joseph Fosco. All Rights Reserved
+;    Copyright (C) 2015-2016  Joseph Fosco. All Rights Reserved
 ;
 ;    This program is free software: you can redistribute it and/or modify
 ;    it under the terms of the GNU General Public License as published by
@@ -25,7 +25,13 @@
   [id-and-clause]
   (CondNode. (first id-and-clause) (second id-and-clause) nil '())
   )
+
 (defn set-cond-output
   [cond-node output-id]
   (assoc cond-node :outputs (conj (:outputs cond-node) output-id ))
+  )
+
+(defn set-cond-variables
+  [cond-node vars]
+  (assoc cond-node :variables (map list vars (repeat nil)))
   )

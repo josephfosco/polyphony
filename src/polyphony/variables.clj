@@ -1,4 +1,4 @@
-;    Copyright (C) 2015  Joseph Fosco. All Rights Reserved
+;    Copyright (C) 2015-2016  Joseph Fosco. All Rights Reserved
 ;
 ;    This program is free software: you can redistribute it and/or modify
 ;    it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@
 
 (defn add-variable
   [variable-name clause-id]
-  (println "add-variable")
   (swap! all-variables new-variable variable-name clause-id)
+  variable-name
   )
 
 (defn get-variable

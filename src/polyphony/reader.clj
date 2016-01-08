@@ -18,8 +18,8 @@
    [polyphony.node.condnode :refer [create-cond-node]]
    [polyphony.node.joinnode :refer [create-join-node]]
    [polyphony.node-tree :refer [add-cond find-id-for-clause add-join set-cond-node-output
-                                set-join-node-output set-join-node-right-input
-                                add-result]]
+                                set-cond-node-variables set-join-node-output
+                                set-join-node-right-input add-result]]
    [polyphony.node.resultnode :refer [create-result-node]]
    [polyphony.variables :refer [add-variable]]
    )
@@ -29,15 +29,20 @@
   [clause-id clause]
   (println clause-id clause)
 
-  (dorun
+  (list clause-id
    (for [tstvar clause :when (and (= (type tstvar) clojure.lang.Symbol)
                                   (= \? (first (name tstvar))))]
-     (do
-       (add-variable tstvar clause-id)
-       (println (name tstvar) " is a variable")
-       tstvar
-       )
-     ))
+     (add-variable tstvar clause-id)
+     )
+   )
+  )
+
+(defn add-variables-to-cond
+  "cond-var-list - a list containing a cond-id and
+   a list of vars in the cond"
+  [cond-var-list]
+  (println "add-variables-to-clauses: " cond-var-list)
+  (set-cond-node-variables (first cond-var-list) (second cond-var-list))
   )
 
 (defn get-existing-conds
@@ -117,7 +122,11 @@
     (println)
 
     (dorun (map add-cond (map create-cond-node new-conds)))
-    (dorun (map create-variables (map first new-conds) (map second new-conds)))
+    (dorun (map add-variables-to-cond
+                (map create-variables
+                     (map first new-conds)
+                     (map second new-conds)))
+           )
     (graph-result-clauses rslt-clauses
                           (graph-cond-clauses (into existing-conds new-conds)))
      )
