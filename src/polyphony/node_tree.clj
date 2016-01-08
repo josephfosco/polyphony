@@ -15,7 +15,7 @@
 
 (ns polyphony.node-tree
   (:require
-   [polyphony.node.condnode  :refer  [set-cond-output set-cond-variables]]
+   [polyphony.node.condnode  :refer  [set-cond-output set-cond-num-variables]]
    [polyphony.node.joinnode  :refer  [set-join-output set-join-right-input]]
    )
   )
@@ -59,16 +59,16 @@
   (swap! all-conds set-cn-output cond-node-id output-id)
   )
 
-(defn- set-cn-variables
+(defn- set-cn-num-variables
   [cur-cond-nodes cond-node-id variable-list]
   (assoc cur-cond-nodes
     (keyword cond-node-id)
-    (set-cond-variables ((keyword cond-node-id) cur-cond-nodes) variable-list))
+    (set-cond-num-variables ((keyword cond-node-id) cur-cond-nodes) variable-list))
   )
 
-(defn set-cond-node-variables
+(defn set-cond-node-num-variables
   [cond-node-id variable-list]
-  (swap! all-conds set-cn-variables cond-node-id variable-list)
+  (swap! all-conds set-cn-num-variables cond-node-id variable-list)
   )
 
 (defn- set-jn-output

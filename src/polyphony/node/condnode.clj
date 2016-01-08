@@ -15,7 +15,7 @@
 
 (ns polyphony.node.condnode)
 
-(defrecord CondNode [id cond-clause variables outputs])
+(defrecord CondNode [id cond-clause num-variables variables outputs])
 
 (defn create-cond-node
   "Used to create a new cond-node
@@ -23,7 +23,7 @@
    id-and-clause - a list with the first element the id for the
                    clause, and the second element the clause"
   [id-and-clause]
-  (CondNode. (first id-and-clause) (second id-and-clause) nil '())
+  (CondNode. (first id-and-clause) (second id-and-clause) nil '{} '())
   )
 
 (defn set-cond-output
@@ -31,7 +31,7 @@
   (assoc cond-node :outputs (conj (:outputs cond-node) output-id ))
   )
 
-(defn set-cond-variables
+(defn set-cond-num-variables
   [cond-node vars]
-  (assoc cond-node :variables (map list vars (repeat nil)))
+  (assoc cond-node :num-variables (count vars))
   )

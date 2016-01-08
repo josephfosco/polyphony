@@ -18,7 +18,7 @@
    [polyphony.node.condnode :refer [create-cond-node]]
    [polyphony.node.joinnode :refer [create-join-node]]
    [polyphony.node-tree :refer [add-cond find-id-for-clause add-join set-cond-node-output
-                                set-cond-node-variables set-join-node-output
+                                set-cond-node-num-variables set-join-node-output
                                 set-join-node-right-input add-result]]
    [polyphony.node.resultnode :refer [create-result-node]]
    [polyphony.variables :refer [add-variable]]
@@ -42,7 +42,7 @@
    a list of vars in the cond"
   [cond-var-list]
   (println "add-variables-to-clauses: " cond-var-list)
-  (set-cond-node-variables (first cond-var-list) (second cond-var-list))
+  (set-cond-node-num-variables (first cond-var-list) (second cond-var-list))
   )
 
 (defn get-existing-conds
