@@ -35,3 +35,10 @@
   [cond-node vars]
   (assoc cond-node :num-variables (count vars))
   )
+
+(defn set-cond-variable
+  [cond-node var-name var-val]
+  (println "set-cond-variable: " var-name var-val)
+  (assoc cond-node :variables (assoc (:variables cond-node)
+                                (keyword var-name) var-val))
+  )

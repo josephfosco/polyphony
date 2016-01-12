@@ -13,8 +13,14 @@
 ;    You should have received a copy of the GNU General Public License
 ;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns polyphony.variables)
+(ns polyphony.variables
+  [:require
+   [polyphony.node-tree :refer [set-cond-node-variable]]
+   ]
+  )
 
+;; all-variables is a map where keys = variable names as keywords and
+;;   vals = a list of cond node ids that use the variable
 (def all-variables (atom {}))
 
 (defn- new-variable
@@ -33,4 +39,15 @@
 (defn get-variable
   [variable-name]
   nil
+  )
+
+(defn set-variable
+  [var-name val]
+  (println "set-variable: " var-name val)
+  (println "set-variable: " ((keyword (name var-name)) @all-variables))
+  (dorun (map set-cond-node-variable
+              ((keyword (name var-name)) @all-variables)
+              (repeat var-name)
+              (repeat val)))
+  val
   )

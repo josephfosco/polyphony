@@ -13,6 +13,13 @@
 ;    You should have received a copy of the GNU General Public License
 ;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns polyphony.core
-  (:require [polyphony.reader])
+(ns polyphony.runner
+  [:require
+   [polyphony.variables :refer [set-variable]]
+   ]
+  )
+
+(defmacro set-var
+  [var-name val]
+  (set-variable var-name val)
   )
