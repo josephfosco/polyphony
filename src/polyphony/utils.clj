@@ -20,3 +20,8 @@
   (and (= (type var-name) clojure.lang.Symbol)
        (= \? (first (name var-name))))
   )
+
+(defn sym-to-key
+  [sym]
+  (keyword (name sym))
+  )

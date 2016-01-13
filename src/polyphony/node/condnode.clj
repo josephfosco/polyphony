@@ -15,7 +15,7 @@
 
 (ns polyphony.node.condnode
   (:require
-   [polyphony.utils :refer [is-variable?]]
+   [polyphony.utils :refer [is-variable? sym-to-key]]
    )
   )
 
@@ -44,9 +44,13 @@
      ))
   )
 
+(defn- send-output-val
+  [cond-node val]
+ )
+
 (defn set-cond-output
   [cond-node output-id]
-  (assoc cond-node :outputs (conj (:outputs cond-node) output-id ))
+  (assoc cond-node :outputs (conj (:outputs cond-node) (sym-to-key output-id) ))
   )
 
 (defn set-cond-num-variables
@@ -63,7 +67,10 @@
                           (keyword var-name) var-val))
         ]
     (if (= (count (:variables new-cond-node)) (:num-variables new-cond-node))
-      (println (eval-cond-node new-cond-node))
+      (if (eval-cond-node new-cond-node)
+        (send-output-val new-cond-node true)
+        (send-output-val new-cond-node false)
+        )
       )
     new-cond-node
     )
