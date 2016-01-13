@@ -21,6 +21,7 @@
                                 set-cond-node-num-variables set-join-node-output
                                 set-join-node-right-input add-result]]
    [polyphony.node.resultnode :refer [create-result-node]]
+   [polyphony.utils :refer [is-variable?]]
    [polyphony.variables :refer [add-variable]]
    )
   )
@@ -30,8 +31,7 @@
   (println clause-id clause)
 
   (list clause-id
-   (for [tstvar clause :when (and (= (type tstvar) clojure.lang.Symbol)
-                                  (= \? (first (name tstvar))))]
+   (for [tstvar clause :when (is-variable? tstvar)]
      (add-variable tstvar clause-id)
      )
    )

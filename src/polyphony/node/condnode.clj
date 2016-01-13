@@ -13,7 +13,11 @@
 ;    You should have received a copy of the GNU General Public License
 ;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns polyphony.node.condnode)
+(ns polyphony.node.condnode
+  (:require
+   [polyphony.utils :refer [is-variable?]]
+   )
+  )
 
 (defrecord CondNode [id cond-clause num-variables variables outputs])
 
@@ -24,6 +28,20 @@
                    clause, and the second element the clause"
   [id-and-clause]
   (CondNode. (first id-and-clause) (second id-and-clause) nil '{} '())
+  )
+
+(defn- eval-cond-node
+  "replace all variables in cond-clause with their value and
+     eval the resulting expression"
+  [cond-node]
+  (println "eval-cond-node: " cond-node)
+  (eval
+   (for [elem (:cond-clause cond-node)]
+     (if (is-variable? elem)
+       ((keyword (name elem)) (:variables cond-node))
+       elem
+       )
+     ))
   )
 
 (defn set-cond-output
@@ -39,6 +57,14 @@
 (defn set-cond-variable
   [cond-node var-name var-val]
   (println "set-cond-variable: " var-name var-val)
-  (assoc cond-node :variables (assoc (:variables cond-node)
-                                (keyword var-name) var-val))
+  (let [new-cond-node (assoc cond-node
+                        :variables
+                        (assoc (:variables cond-node)
+                          (keyword var-name) var-val))
+        ]
+    (if (= (count (:variables new-cond-node)) (:num-variables new-cond-node))
+      (println (eval-cond-node new-cond-node))
+      )
+    new-cond-node
+    )
   )
