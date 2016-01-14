@@ -15,11 +15,12 @@
 
 (ns polyphony.reader
   (:require
-   [polyphony.node.condnode :refer [create-cond-node]]
-   [polyphony.node.joinnode :refer [create-join-node]]
-   [polyphony.node-tree :refer [add-cond find-id-for-clause add-join set-cond-node-output
-                                set-cond-node-num-variables set-join-node-output
-                                set-join-node-right-input add-result]]
+   [polyphony.node.condnode :refer [create-cond-node
+                                    set-cond-num-variables set-cond-output]]
+   [polyphony.node.joinnode :refer [create-join-node set-join-right-input
+                                    set-join-output]]
+   [polyphony.node-tree :refer [add-cond find-id-for-clause add-join  get-cond-node
+                                add-result]]
    [polyphony.node.resultnode :refer [create-result-node]]
    [polyphony.utils :refer [is-variable?]]
    [polyphony.variables :refer [add-variable]]
@@ -27,22 +28,24 @@
   )
 
 (defn create-variables
-  [clause-id clause]
-  (println clause-id clause)
+  [cond-node-as-atom]
 
-  (list clause-id
-   (for [tstvar clause :when (is-variable? tstvar)]
-     (add-variable tstvar clause-id)
+  (list cond-node-as-atom
+        (for [tstvar (:cond-clause @cond-node-as-atom)
+              :when (is-variable? tstvar)]
+     (add-variable tstvar cond-node-as-atom)
      )
    )
   )
 
 (defn add-variables-to-cond
-  "cond-var-list - a list containing a cond-id and
+  "cond-var-list - a list containing a cond-node as an atom and
    a list of vars in the cond"
   [cond-var-list]
-  (println "add-variables-to-clauses: " cond-var-list)
-  (set-cond-node-num-variables (first cond-var-list) (second cond-var-list))
+  (println "add-variables-to-cond: " cond-var-list)
+  (swap! (first cond-var-list)
+         set-cond-num-variables
+         (second cond-var-list))
   )
 
 (defn get-existing-conds
@@ -60,74 +63,90 @@
   )
 
 (defn- create-joins
-  [join-node-id clauses]
-  (println "create-joins " join-node-id clauses)
-  (let [new-join (when (seq clauses)
-                   (create-join-node (ffirst clauses)))]
+  [join-node-as-atom cond-nodes-as-atoms]
+  (println)
+  (println "create-joins " join-node-as-atom cond-nodes-as-atoms)
+  (println)
+  (let [new-join (when (seq cond-nodes-as-atoms)
+                   (atom (create-join-node (:id (deref (first cond-nodes-as-atoms))))))]
     (cond (nil? new-join)
           ;; no more clauses, return last join
-          join-node-id
-          (and (nil? join-node-id) new-join)
+          new-join
+          (and (nil? join-node-as-atom) new-join)
           ;; first time add first 2 clauses to join
           (do
             (add-join new-join)
-            (set-join-node-right-input (:id new-join) (first (second clauses)))
-            (set-cond-node-output (ffirst clauses) (:id new-join))
-            (set-cond-node-output (first (second clauses)) (:id new-join))
-            (recur (:id new-join) (rest (rest clauses)))
+            (swap! new-join
+                   set-join-right-input
+                   (:id (deref (second cond-nodes-as-atoms))))
+            (swap! (first cond-nodes-as-atoms) set-cond-output new-join)
+            (swap! (second cond-nodes-as-atoms) set-cond-output  new-join)
+            (recur new-join (rest (rest cond-nodes-as-atoms)))
             )
           :else
           ;; add join-node and first clause to new-join
           (do
             (add-join new-join)
-            (set-cond-node-output (ffirst clauses) (:id new-join))
-            (set-join-node-right-input (:id new-join) join-node-id)
-            (set-join-node-output join-node-id (:id new-join))
-            (recur (:id new-join) (rest clauses)))
+            (swap! (first cond-nodes-as-atoms) set-cond-output new-join)
+            (swap! new-join
+                   set-join-right-input
+                   (:id @join-node-as-atom))
+            (swap! join-node-as-atom set-join-output  new-join)
+            (recur new-join (rest cond-nodes-as-atoms)))
           )
     )
   )
 
 (defn- graph-cond-clauses
-  [cond-clauses]
-  (if (= (count cond-clauses) 1)
-    (ffirst cond-clauses)
-    (create-joins nil cond-clauses)
+  [cond-nodes-as-atoms]
+  (if (= (count cond-nodes-as-atoms) 1)
+    (first cond-nodes-as-atoms)
+    (create-joins nil cond-nodes-as-atoms)
     )
   )
 
 (defn- graph-result-clauses
   [rslt-clauses input-clause-id]
-  (let [rslt (create-result-node input-clause-id rslt-clauses)]
-    (add-result rslt)
-    (cond (.startsWith (name input-clause-id) "C")
-          (set-cond-node-output input-clause-id (:id rslt))
-          (.startsWith (name input-clause-id) "J")
-          (set-join-node-output input-clause-id (:id rslt))
-          :else
-          (throw (Throwable. "InvalidNodeId"))
-          )
-    )
+  (comment
+    (let [rslt (create-result-node input-clause-id rslt-clauses)]
+      (add-result rslt)
+      (cond (.startsWith (name input-clause-id) "C")
+            (set-cond-node-output input-clause-id (:id rslt))
+            (.startsWith (name input-clause-id) "J")
+            (set-join-node-output input-clause-id (:id rslt))
+            :else
+            (throw (Throwable. "InvalidNodeId"))
+            )
+      ))
+
   )
 
-(defmacro defrule
+(defn- add-rule-to-graph
   [cond-clauses rslt-clauses]
   (let [existing-conds (get-existing-conds cond-clauses)
-         new-conds (new-clause cond-clauses)
+        new-conds (new-clause cond-clauses)
+        existing-cond-nodes (map get-cond-node (map first existing-conds))
+        new-cond-nodes (map atom (map create-cond-node new-conds))
          ]
 
     (println)
     (println "existing-conds: " existing-conds)
     (println "new-conds: " new-conds)
+    (println "existing-cond-nodes: " existing-cond-nodes)
+    (println "new-cond-nodes: " new-cond-nodes)
     (println)
 
-    (dorun (map add-cond (map create-cond-node new-conds)))
+    (dorun (map add-cond new-cond-nodes))
     (dorun (map add-variables-to-cond
-                (map create-variables
-                     (map first new-conds)
-                     (map second new-conds)))
+                (map create-variables new-cond-nodes))
            )
     (graph-result-clauses rslt-clauses
-                          (graph-cond-clauses (into existing-conds new-conds)))
+                          (graph-cond-clauses (into existing-cond-nodes
+                                                    new-cond-nodes)))
      )
+  )
+
+(defmacro defrule
+  [cond-clauses rslt-clauses]
+  (add-rule-to-graph cond-clauses rslt-clauses)
   )

@@ -49,8 +49,8 @@
  )
 
 (defn set-cond-output
-  [cond-node output-id]
-  (assoc cond-node :outputs (conj (:outputs cond-node) (sym-to-key output-id) ))
+  [cond-node output-node]
+  (assoc cond-node :outputs (conj (:outputs cond-node) output-node ))
   )
 
 (defn set-cond-num-variables

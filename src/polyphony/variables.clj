@@ -24,15 +24,15 @@
 (def all-variables (atom {}))
 
 (defn- new-variable
-  [cur-variables variable-name clause-id]
+  [cur-variables variable-name cond-node]
   (assoc cur-variables
     (keyword (name variable-name))
-    (conj ((keyword (name variable-name)) cur-variables) (keyword clause-id)))
+    (conj ((keyword (name variable-name)) cur-variables) cond-node))
   )
 
 (defn add-variable
-  [variable-name clause-id]
-  (swap! all-variables new-variable variable-name clause-id)
+  [variable-name cond-node]
+  (swap! all-variables new-variable variable-name cond-node)
   variable-name
   )
 

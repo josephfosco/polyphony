@@ -18,6 +18,7 @@
    [polyphony.node.condnode :refer [set-cond-output set-cond-num-variables
                                     set-cond-variable]]
    [polyphony.node.joinnode :refer [set-join-output set-join-right-input]]
+   [polyphony.utils :refer [sym-to-key]]
    )
   )
 
@@ -26,13 +27,18 @@
 (def all-results (atom {}))
 
 (defn add-cond
-  [new-cond]
-  (swap! all-conds assoc (keyword  (:id new-cond)) new-cond)
+  [new-cond-as-atom]
+  (swap! all-conds assoc (keyword  (:id @new-cond-as-atom)) new-cond-as-atom)
+  )
+
+(defn get-cond-node
+  [cond-id]
+  ((sym-to-key cond-id) @all-conds)
   )
 
 (defn add-join
-  [new-join]
-  (swap! all-joins assoc (keyword  (:id new-join)) new-join)
+  [new-join-as-atom]
+  (swap! all-joins assoc (keyword  (:id @new-join-as-atom)) new-join-as-atom)
   )
 
 (defn add-result
@@ -42,7 +48,7 @@
 
 (defn find-id-for-clause
   [clause]
-  (let [id-and-clause (first (for [cond-node (vals @all-conds)
+  (let [id-and-clause (first (for [cond-node (map deref (vals @all-conds))
                         :when (= clause (:cond-clause cond-node))]
                     (list (:id cond-node) clause)))]
     id-and-clause)
@@ -58,18 +64,6 @@
 (defn set-cond-node-output
   [cond-node-id output-id]
   (swap! all-conds set-cn-output cond-node-id output-id)
-  )
-
-(defn- set-cn-num-variables
-  [cur-cond-nodes cond-node-id variable-list]
-  (assoc cur-cond-nodes
-    (keyword cond-node-id)
-    (set-cond-num-variables ((keyword cond-node-id) cur-cond-nodes) variable-list))
-  )
-
-(defn set-cond-node-num-variables
-  [cond-node-id variable-list]
-  (swap! all-conds set-cn-num-variables cond-node-id variable-list)
   )
 
 (defn- set-cn-variable
@@ -97,17 +91,4 @@
 (defn set-join-node-output
   [join-node-id output-id]
   (swap! all-joins set-jn-output join-node-id output-id)
-  )
-
-(defn- set-jn-right
-  [cur-join-nodes join-node-id right-input-id]
-  (assoc cur-join-nodes
-    (keyword join-node-id)
-    (set-join-right-input ((keyword join-node-id) cur-join-nodes) right-input-id))
-  )
-
-(defn set-join-node-right-input
-  [join-node-id right-input-id]
-  (println "set-join-node-right-inpot join-node-id: " join-node-id "right-input-id: " right-input-id)
-  (swap! all-joins set-jn-right join-node-id right-input-id)
   )
