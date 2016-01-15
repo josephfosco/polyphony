@@ -18,9 +18,9 @@
    [polyphony.node.condnode :refer [create-cond-node
                                     set-cond-num-variables set-cond-output]]
    [polyphony.node.joinnode :refer [create-join-node set-join-right-input
-                                    set-join-output]]
-   [polyphony.node-tree :refer [add-cond find-id-for-clause add-join  get-cond-node
-                                add-result]]
+                                    set-join-output-node]]
+   [polyphony.node-tree :refer [add-cond find-id-for-clause add-join
+                                get-cond-node add-result]]
    [polyphony.node.resultnode :refer [create-result-node]]
    [polyphony.utils :refer [is-variable?]]
    [polyphony.variables :refer [add-variable]]
@@ -92,7 +92,7 @@
             (swap! new-join
                    set-join-right-input
                    (:id @join-node-as-atom))
-            (swap! join-node-as-atom set-join-output new-join)
+            (swap! join-node-as-atom set-join-output-node new-join)
             (recur new-join (rest cond-nodes-as-atoms)))
           )
     )
@@ -113,7 +113,7 @@
     (cond (.startsWith (name (:id @input-clause-atom)) "C")
           (swap! input-clause-atom set-cond-output rslt)
           (.startsWith (name (:id @input-clause-atom)) "J")
-          (swap! input-clause-atom set-join-output rslt)
+          (swap! input-clause-atom set-join-output-node rslt)
           :else
           (throw (Throwable. "InvalidNodeId"))
           )

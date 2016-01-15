@@ -32,16 +32,21 @@
 
 (defn- eval-cond-node
   "replace all variables in cond-clause with their value and
-     eval the resulting expression"
+     eval the resulting expression
+   Returns: true or false
+
+  "
   [cond-node]
   (println "eval-cond-node: " cond-node)
-  (eval
-   (for [elem (:cond-clause cond-node)]
-     (if (is-variable? elem)
-       ((keyword (name elem)) (:variables cond-node))
-       elem
-       )
-     ))
+  (if (eval
+       (for [elem (:cond-clause cond-node)]
+         (if (is-variable? elem)
+           ((keyword (name elem)) (:variables cond-node))
+           elem
+           )
+         ))
+    true
+    false)
   )
 
 (defn- send-output-val
@@ -58,7 +63,7 @@
   (assoc cond-node :num-variables (count vars))
   )
 
-(defn set-cond-variable
+(defn- set-cond-variable
   [cond-node var-name var-val]
   (println "set-cond-variable: " var-name var-val)
   (let [new-cond-node (assoc cond-node
@@ -66,12 +71,15 @@
                         (assoc (:variables cond-node)
                           (keyword var-name) var-val))
         ]
-    (if (= (count (:variables new-cond-node)) (:num-variables new-cond-node))
-      (if (eval-cond-node new-cond-node)
-        (send-output-val new-cond-node true)
-        (send-output-val new-cond-node false)
-        )
-      )
     new-cond-node
+    )
+  )
+
+(defn set-cond-atom-variable
+  [cond-node-atom var-name var-val]
+  (let [new-cond-node (swap! cond-node-atom var-name var-val)]
+    (when (= (count (:variables new-cond-node)) (:num-variables new-cond-node))
+      (send-output-val new-cond-node (send-output-val new-cond-node true))
+      )
     )
   )
