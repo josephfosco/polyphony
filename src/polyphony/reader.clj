@@ -68,10 +68,11 @@
   (println "create-joins " join-node-as-atom cond-nodes-as-atoms)
   (println)
   (let [new-join (when (seq cond-nodes-as-atoms)
-                   (atom (create-join-node (:id (deref (first cond-nodes-as-atoms))))))]
+                   (atom (create-join-node
+                          (:id (deref (first cond-nodes-as-atoms))))))]
     (cond (nil? new-join)
           ;; no more clauses, return last join
-          new-join
+          join-node-as-atom
           (and (nil? join-node-as-atom) new-join)
           ;; first time add first 2 clauses to join
           (do
@@ -80,7 +81,7 @@
                    set-join-right-input
                    (:id (deref (second cond-nodes-as-atoms))))
             (swap! (first cond-nodes-as-atoms) set-cond-output new-join)
-            (swap! (second cond-nodes-as-atoms) set-cond-output  new-join)
+            (swap! (second cond-nodes-as-atoms) set-cond-output new-join)
             (recur new-join (rest (rest cond-nodes-as-atoms)))
             )
           :else
@@ -91,7 +92,7 @@
             (swap! new-join
                    set-join-right-input
                    (:id @join-node-as-atom))
-            (swap! join-node-as-atom set-join-output  new-join)
+            (swap! join-node-as-atom set-join-output new-join)
             (recur new-join (rest cond-nodes-as-atoms)))
           )
     )
@@ -106,19 +107,17 @@
   )
 
 (defn- graph-result-clauses
-  [rslt-clauses input-clause-id]
-  (comment
-    (let [rslt (create-result-node input-clause-id rslt-clauses)]
-      (add-result rslt)
-      (cond (.startsWith (name input-clause-id) "C")
-            (set-cond-node-output input-clause-id (:id rslt))
-            (.startsWith (name input-clause-id) "J")
-            (set-join-node-output input-clause-id (:id rslt))
-            :else
-            (throw (Throwable. "InvalidNodeId"))
-            )
-      ))
-
+  [rslt-clauses input-clause-atom]
+  (let [rslt (atom (create-result-node (:id @input-clause-atom) rslt-clauses))]
+    (add-result rslt)
+    (cond (.startsWith (name (:id @input-clause-atom)) "C")
+          (swap! input-clause-atom set-cond-output rslt)
+          (.startsWith (name (:id @input-clause-atom)) "J")
+          (swap! input-clause-atom set-join-output rslt)
+          :else
+          (throw (Throwable. "InvalidNodeId"))
+          )
+    )
   )
 
 (defn- add-rule-to-graph
@@ -149,4 +148,5 @@
 (defmacro defrule
   [cond-clauses rslt-clauses]
   (add-rule-to-graph cond-clauses rslt-clauses)
+  nil
   )

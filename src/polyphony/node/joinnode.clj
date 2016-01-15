@@ -15,12 +15,11 @@
 
 (ns polyphony.node.joinnode)
 
-(defrecord JoinNode [id left-input left-input-status right-input right-input-status output-id])
+(defrecord JoinNode [id left-input left-input-status right-input right-input-status output-node])
 
 (defn create-join-node
   "Used to create a new join-node"
   [left-input]
-  (println "create-join-node left-input:" left-input)
   (JoinNode. (gensym 'J_) left-input false nil false nil)
   )
 
@@ -30,6 +29,7 @@
   )
 
 (defn set-join-output
-  [join-node output-node-id]
-  (assoc join-node :output-id output-node-id)
+  [join-node output-node]
+  (println join-node output-node)
+  (assoc join-node :output-node output-node)
   )

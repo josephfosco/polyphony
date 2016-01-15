@@ -43,7 +43,7 @@
 
 (defn add-result
   [new-result]
-  (swap! all-results assoc (keyword  (:id new-result)) new-result)
+  (swap! all-results assoc (keyword  (:id @new-result)) new-result)
   )
 
 (defn find-id-for-clause
@@ -52,18 +52,6 @@
                         :when (= clause (:cond-clause cond-node))]
                     (list (:id cond-node) clause)))]
     id-and-clause)
-  )
-
-(defn- set-cn-output
-  [cur-cond-nodes cond-node-id output-id]
-  (assoc cur-cond-nodes
-    (keyword cond-node-id)
-    (set-cond-output ((keyword cond-node-id) cur-cond-nodes) output-id))
-  )
-
-(defn set-cond-node-output
-  [cond-node-id output-id]
-  (swap! all-conds set-cn-output cond-node-id output-id)
   )
 
 (defn- set-cn-variable
@@ -79,16 +67,4 @@
   [cond-node-id-key variable-name variable-val]
   (println "set-cond-node-variable: " cond-node-id-key)
   (swap! all-conds set-cn-variable cond-node-id-key variable-name variable-val)
-  )
-
-(defn- set-jn-output
-  [cur-join-nodes join-node-id output-id]
-  (assoc cur-join-nodes
-    (keyword join-node-id)
-    (set-join-output ((keyword join-node-id) cur-join-nodes) output-id))
-  )
-
-(defn set-join-node-output
-  [join-node-id output-id]
-  (swap! all-joins set-jn-output join-node-id output-id)
   )
