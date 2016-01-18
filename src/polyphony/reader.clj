@@ -38,7 +38,7 @@
    )
   )
 
-(defn add-variables-to-cond
+(defn add-num-variables-to-cond
   "cond-var-list - a list containing a cond-node as an atom and
    a list of vars in the cond"
   [cond-var-list]
@@ -136,7 +136,7 @@
     (println)
 
     (dorun (map add-cond new-cond-nodes))
-    (dorun (map add-variables-to-cond
+    (dorun (map add-num-variables-to-cond
                 (map create-variables new-cond-nodes))
            )
     (graph-result-clauses rslt-clauses

@@ -26,7 +26,7 @@
 
 (defn set-join-right-input-id
   [join-node right-input-id]
-  (assoc join-node :right-input right-input-id :right-input-status false)
+  (assoc join-node :right-input-id right-input-id :right-input-status false)
   )
 
 (defn set-join-output-node
