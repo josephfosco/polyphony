@@ -17,7 +17,7 @@
   (:require
    [polyphony.node.condnode :refer [create-cond-node
                                     set-cond-num-variables set-cond-output]]
-   [polyphony.node.joinnode :refer [create-join-node set-join-right-input
+   [polyphony.node.joinnode :refer [create-join-node set-join-right-input-id
                                     set-join-output-node]]
    [polyphony.node-tree :refer [add-cond find-id-for-clause add-join
                                 get-cond-node add-result]]
@@ -78,7 +78,7 @@
           (do
             (add-join new-join)
             (swap! new-join
-                   set-join-right-input
+                   set-join-right-input-id
                    (:id (deref (second cond-nodes-as-atoms))))
             (swap! (first cond-nodes-as-atoms) set-cond-output new-join)
             (swap! (second cond-nodes-as-atoms) set-cond-output new-join)
@@ -90,7 +90,7 @@
             (add-join new-join)
             (swap! (first cond-nodes-as-atoms) set-cond-output new-join)
             (swap! new-join
-                   set-join-right-input
+                   set-join-right-input-id
                    (:id @join-node-as-atom))
             (swap! join-node-as-atom set-join-output-node new-join)
             (recur new-join (rest cond-nodes-as-atoms)))

@@ -16,6 +16,7 @@
 (ns polyphony.variables
   [:require
    [polyphony.node.condnode :refer [set-cond-atom-variable]]
+   [polyphony.utils :refer [sym-to-key]]
    ]
   )
 
@@ -42,11 +43,14 @@
   )
 
 (defn set-variable
-  [var-name val]
+  [var-name val]2
   (println "set-variable: " var-name val)
-  (println "set-variable: " ((keyword (name var-name)) @all-variables))
-  (dorun (for [cond-atom ((keyword (name var-name)) @all-variables)]
-           (swap! cond-atom set-cond-atom-variable var-name val)
+  (println "set-variable: " ((sym-to-key var-name) @all-variables))
+  (dorun (for [cond-output-atom ((sym-to-key var-name) @all-variables)]
+           (do
+             (println "set-variable    before: " cond-output-atom)
+             (set-cond-atom-variable cond-output-atom var-name val)
+             )
            ))
   val
   )

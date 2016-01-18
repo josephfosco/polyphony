@@ -16,7 +16,6 @@
 (ns polyphony.node-tree
   (:require
    [polyphony.node.condnode :refer [set-cond-output set-cond-num-variables]]
-   [polyphony.node.joinnode :refer [set-join-right-input]]
    [polyphony.utils :refer [sym-to-key]]
    )
   )

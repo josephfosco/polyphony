@@ -15,6 +15,7 @@
 
 (ns polyphony.node.condnode
   (:require
+   [polyphony.node.joinnode :refer [set-join-atom-output-val]]
    [polyphony.utils :refer [is-variable? sym-to-key]]
    )
   )
@@ -51,6 +52,21 @@
 
 (defn- send-output-val
   [cond-node val]
+  (println "send-output-val")
+  (dorun (for [output-node (:outputs cond-node)]
+             (cond (.startsWith (name (:id @output-node)) "J")
+                   (set-join-atom-output-val output-node (:id cond-node) val)
+                   :else (println "send-output-val4: " (:id @output-node))
+                   )
+           ))
+  (comment
+    (cond (.startsWith (name (:id @input-clause-atom)) "C")
+          (swap! input-clause-atom set-cond-output rslt)
+          (.startsWith (name (:id @input-clause-atom)) "J")
+          (swap! input-clause-atom set-join-output rslt)
+          :else
+          (throw (Throwable. "InvalidNodeId"))
+          ))
  )
 
 (defn set-cond-output
@@ -66,20 +82,18 @@
 (defn- set-cond-variable
   [cond-node var-name var-val]
   (println "set-cond-variable: " var-name var-val)
-  (let [new-cond-node (assoc cond-node
-                        :variables
-                        (assoc (:variables cond-node)
-                          (keyword var-name) var-val))
-        ]
-    new-cond-node
-    )
+  (assoc cond-node
+    :variables
+    (assoc (:variables cond-node)
+      (keyword var-name) var-val))
   )
 
 (defn set-cond-atom-variable
   [cond-node-atom var-name var-val]
-  (let [new-cond-node (swap! cond-node-atom var-name var-val)]
+  (println "set-cond-atom-variable")
+  (let [new-cond-node (swap! cond-node-atom set-cond-variable var-name var-val)]
     (when (= (count (:variables new-cond-node)) (:num-variables new-cond-node))
-      (send-output-val new-cond-node (send-output-val new-cond-node true))
+      (send-output-val new-cond-node true)
       )
     )
   )

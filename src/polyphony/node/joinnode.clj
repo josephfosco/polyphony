@@ -15,17 +15,18 @@
 
 (ns polyphony.node.joinnode)
 
-(defrecord JoinNode [id left-input left-input-status right-input right-input-status output-node])
+(defrecord JoinNode [id left-input-id left-input-status right-input-id
+                     right-input-status output-node])
 
 (defn create-join-node
   "Used to create a new join-node"
-  [left-input]
-  (JoinNode. (gensym 'J_) left-input false nil false nil)
+  [left-input-id]
+  (JoinNode. (gensym 'J_) left-input-id false nil false nil)
   )
 
-(defn set-join-right-input
-  [join-node right-input]
-  (assoc join-node :right-input right-input :right-input-status false)
+(defn set-join-right-input-id
+  [join-node right-input-id]
+  (assoc join-node :right-input right-input-id :right-input-status false)
   )
 
 (defn set-join-output-node
@@ -34,6 +35,38 @@
   (assoc join-node :output-node output-node)
   )
 
+(defn- send-output-val
+  [join-node val]
+  (println "join send-output-val")
+  (comment
+    (cond (.startsWith (name (:id @input-clause-atom)) "C")
+          (swap! input-clause-atom set-cond-output rslt)
+          (.startsWith (name (:id @input-clause-atom)) "J")
+          (swap! input-clause-atom set-join-output rslt)
+          :else
+          (throw (Throwable. "InvalidNodeId"))
+          ))
+ )
+
 (defn set-join-output-val
   [join-node input-id val]
+  (println "set-join-output-val: " input-id val)
+  (cond (= (:left-input-id join-node) input-id)
+        (assoc join-node :left-input-status val)
+        (= (:right-input-id join-node) input-id)
+        (assoc join-node :right-input-status val)
+        :else (throw (Throwable. "InvalidJoinNodeId"))
+        )
+  )
+
+(defn set-join-atom-output-val
+  [join-node-atom input-id val]
+  (println "set-join-atom-output-val")
+  (let [new-join-node (swap! join-node-atom set-join-output-val input-id val)]
+    (when (and (= (:left-input-status new-join-node) true)
+               (= (:right-input-status new-join-node) true)
+               )
+      (send-output-val new-join-node true)
+      )
+    )
   )
