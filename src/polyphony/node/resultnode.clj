@@ -22,3 +22,16 @@
   [input-id rslt-clauses]
   (ResultNode. (gensym 'R_) input-id false rslt-clauses '())
   )
+
+(defn set-result-input-val
+  [result-node val]
+  (println "set-result-input-val: " val)
+  (assoc result-node :input-status val)
+  )
+
+(defn set-result-atom-input-val
+  [result-node-atom val]
+  (println "set-result-atom-input-val: " result-node-atom)
+  (let [new-result-node (swap! result-node-atom set-result-input-val val)]
+    )
+  )

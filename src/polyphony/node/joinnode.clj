@@ -13,7 +13,11 @@
 ;    You should have received a copy of the GNU General Public License
 ;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns polyphony.node.joinnode)
+(ns polyphony.node.joinnode
+  (:require
+   [polyphony.node.resultnode :refer [set-result-atom-input-val]]
+   )
+  )
 
 (defrecord JoinNode [id left-input-id left-input-status right-input-id
                      right-input-status output-node])
@@ -35,18 +39,23 @@
   (assoc join-node :output-node output-node)
   )
 
+(declare set-join-atom-output-val)
 (defn- send-output-val
   [join-node val]
   (println "join send-output-val")
-  (comment
-    (cond (.startsWith (name (:id @input-clause-atom)) "C")
-          (swap! input-clause-atom set-cond-output rslt)
-          (.startsWith (name (:id @input-clause-atom)) "J")
-          (swap! input-clause-atom set-join-output rslt)
-          :else
-          (throw (Throwable. "InvalidNodeId"))
-          ))
- )
+  (cond (.startsWith (name (:id (deref (:output-node join-node)))) "J")
+        (set-join-atom-output-val (:output-node join-node)
+                                  (:id join-node)
+                                  val)
+        (.startsWith (name (:id (deref (:output-node join-node)))) "R")
+        (do
+          (println "join send-output-val: " (:output-node join-node))
+          (set-result-atom-input-val (:output-node join-node) val)
+          )
+        :else
+        (throw (Throwable. "InvalidOutputNode"))
+        )
+  )
 
 (defn set-join-output-val
   [join-node input-id val]
