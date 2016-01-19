@@ -39,7 +39,7 @@
 
   "
   [cond-node]
-  (println "eval-cond-node: " cond-node)
+  (println "eval-cond-node: ")
   (if (eval
        (for [elem (:cond-clause cond-node)]
          (if (is-variable? elem)
@@ -89,7 +89,7 @@
   (println "set-cond-atom-variable")
   (let [new-cond-node (swap! cond-node-atom set-cond-variable var-name var-val)]
     (when (= (count (:variables new-cond-node)) (:num-variables new-cond-node))
-      (send-output-val new-cond-node true)
+      (send-output-val new-cond-node (eval-cond-node new-cond-node))
       )
     )
   )
