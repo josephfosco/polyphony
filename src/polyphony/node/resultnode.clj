@@ -23,6 +23,15 @@
   (ResultNode. (gensym 'R_) input-id false rslt-clauses '())
   )
 
+(defn eval-result-clauses
+  [result-node]
+  (println "eval-result-clauses: ")
+  (dorun (for [clause (:result-clauses result-node)]
+           (eval clause)
+           )
+   )
+  )
+
 (defn set-result-input-val
   [result-node val]
   (println "set-result-input-val: " val)
@@ -32,6 +41,12 @@
 (defn set-result-atom-input-val
   [result-node-atom val]
   (println "set-result-atom-input-val: " result-node-atom)
-  (let [new-result-node (swap! result-node-atom set-result-input-val val)]
+  ;; Only set input status if input-status is not currently true
+  ;; In other words - only execute result first time input-status
+  ;; is set to true
+  (if (not (:input-status @result-node-atom))
+    (let [new-result-node (swap! result-node-atom set-result-input-val val)]
+      (eval-result-clauses new-result-node)
+      )
     )
   )
