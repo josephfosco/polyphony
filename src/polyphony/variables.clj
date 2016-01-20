@@ -16,6 +16,7 @@
 (ns polyphony.variables
   [:require
    [polyphony.node.condnode :refer [set-cond-atom-variable]]
+   [polyphony.node.resultnode :refer [set-result-atom-variable]]
    [polyphony.utils :refer [sym-to-key]]
    ]
   )
@@ -25,15 +26,15 @@
 (def all-variables (atom {}))
 
 (defn- new-variable
-  [cur-variables variable-name cond-node]
+  [cur-variables variable-name node-atom]
   (assoc cur-variables
     (keyword (name variable-name))
-    (conj ((keyword (name variable-name)) cur-variables) cond-node))
+    (conj ((keyword (name variable-name)) cur-variables) node-atom))
   )
 
 (defn add-variable
-  [variable-name cond-node]
-  (swap! all-variables new-variable variable-name cond-node)
+  [variable-name node-atom]
+  (swap! all-variables new-variable variable-name node-atom)
   variable-name
   )
 
@@ -43,14 +44,14 @@
   )
 
 (defn set-variable
-  [var-name val]2
-  (println "set-variable: " var-name val)
-  (println "set-variable: " ((sym-to-key var-name) @all-variables))
-  (dorun (for [cond-output-atom ((sym-to-key var-name) @all-variables)]
-           (do
-             (println "set-variable    before: " cond-output-atom)
-             (set-cond-atom-variable cond-output-atom var-name val)
-             )
+  [var-name val]
+  (println "set-variable1: " var-name val)
+  (dorun (for [output-atom ((sym-to-key var-name) @all-variables)]
+           (cond (.startsWith (name (:id @output-atom)) "C")
+                 (set-cond-atom-variable output-atom var-name val)
+                 (.startsWith (name (:id @output-atom)) "R")
+                 (set-result-atom-variable output-atom var-name val)
+                 )
            ))
   val
   )

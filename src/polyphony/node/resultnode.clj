@@ -13,23 +13,41 @@
 ;    You should have received a copy of the GNU General Public License
 ;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns polyphony.node.resultnode)
+(ns polyphony.node.resultnode
+  (:require
+   [polyphony.utils :refer [substitute-variable-vals]]
+   )
+  )
 
 (defrecord ResultNode [id input-id input-status result-clauses variables])
 
 (defn create-result-node
   "Used to create a new result-node"
   [input-id rslt-clauses]
-  (ResultNode. (gensym 'R_) input-id false rslt-clauses '())
+  (ResultNode. (gensym 'R_) input-id false rslt-clauses '{})
   )
 
 (defn eval-result-clauses
   [result-node]
   (println "eval-result-clauses: ")
   (dorun (for [clause (:result-clauses result-node)]
-           (eval clause)
+           (eval (substitute-variable-vals clause (:variables result-node))
+                 )
            )
-   )
+         )
+  )
+
+(defn- set-result-variable
+  [result-node var-name var-val]
+  (assoc result-node
+    :variables
+    (assoc (:variables result-node)
+      (keyword var-name) var-val))
+  )
+
+(defn set-result-atom-variable
+  [result-node-atom var-name val]
+  (swap! result-node-atom set-result-variable var-name val)
   )
 
 (defn set-result-input-val

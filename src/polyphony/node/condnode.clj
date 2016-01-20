@@ -17,7 +17,7 @@
   (:require
    [polyphony.node.joinnode :refer [set-join-atom-output-val]]
    [polyphony.node.resultnode :refer [set-result-atom-input-val]]
-   [polyphony.utils :refer [is-variable? sym-to-key]]
+   [polyphony.utils :refer [is-variable? substitute-variable-vals sym-to-key]]
    )
   )
 
@@ -40,13 +40,9 @@
   "
   [cond-node]
   (println "eval-cond-node: ")
-  (if (eval
-       (for [elem (:cond-clause cond-node)]
-         (if (is-variable? elem)
-           ((keyword (name elem)) (:variables cond-node))
-           elem
-           )
-         ))
+  (if (eval (substitute-variable-vals (:cond-clause cond-node)
+                                      (:variables cond-node))
+            )
     true
     false)
   )

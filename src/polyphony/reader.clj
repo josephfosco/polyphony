@@ -27,7 +27,7 @@
    )
   )
 
-(defn create-variables
+(defn create-cond-variables
   [cond-node-as-atom]
 
   (list cond-node-as-atom
@@ -36,6 +36,17 @@
      (add-variable tstvar cond-node-as-atom)
      )
    )
+  )
+
+(defn create-result-variables
+  [result-node-as-atom]
+  (println)
+  (println "create-result-variables " (:result-clauses @result-node-as-atom))
+  (dorun (for [result-clause (:result-clauses @result-node-as-atom)]
+           (dorun (for [tstvar result-clause
+                        :when (is-variable? tstvar)]
+                    (add-variable tstvar result-node-as-atom)
+                    ))))
   )
 
 (defn add-num-variables-to-cond
@@ -117,6 +128,7 @@
           :else
           (throw (Throwable. "InvalidNodeId"))
           )
+    rslt
     )
   )
 
@@ -137,12 +149,15 @@
 
     (dorun (map add-cond new-cond-nodes))
     (dorun (map add-num-variables-to-cond
-                (map create-variables new-cond-nodes))
+                (map create-cond-variables new-cond-nodes))
            )
-    (graph-result-clauses rslt-clauses
-                          (graph-cond-clauses (into existing-cond-nodes
-                                                    new-cond-nodes)))
-     )
+    (->> new-cond-nodes
+         (into existing-cond-nodes)
+         (graph-cond-clauses)
+         (graph-result-clauses rslt-clauses)
+         (create-result-variables)
+         )
+    )
   )
 
 (defmacro defrule

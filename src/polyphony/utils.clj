@@ -25,3 +25,13 @@
   [sym]
   (keyword (name sym))
   )
+
+(defn substitute-variable-vals
+  [clause variable-dict]
+  (for [elem clause]
+    (if (is-variable? elem)
+      ((keyword (name elem)) variable-dict)
+      elem
+      )
+    )
+  )
