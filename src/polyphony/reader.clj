@@ -132,7 +132,7 @@
     )
   )
 
-(defn- add-rule-to-graph
+(defn add-rule-to-graph
   [cond-clauses rslt-clauses]
   (let [existing-conds (get-existing-conds cond-clauses)
         new-conds (new-clause cond-clauses)
@@ -158,10 +158,4 @@
          (create-result-variables)
          )
     )
-  )
-
-(defmacro defrule
-  [cond-clauses rslt-clauses]
-  (add-rule-to-graph cond-clauses rslt-clauses)
-  nil
   )

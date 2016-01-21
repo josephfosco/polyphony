@@ -14,5 +14,25 @@
 ;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 (ns polyphony.core
-  (:require [polyphony.reader])
+  (:require
+   [polyphony.node-tree :refer [reset-node-tree]]
+   [polyphony.reader :refer [add-rule-to-graph]]
+   [polyphony.variables :refer [set-variable]]
+   )
+  )
+
+(defmacro defrule
+  [cond-clauses rslt-clauses]
+  (add-rule-to-graph cond-clauses rslt-clauses)
+  nil
+  )
+
+(defmacro set-var
+  [var-name val]
+  (set-variable var-name val)
+  )
+
+(defn reset-variable-vals
+  []
+  (reset-node-tree)
   )

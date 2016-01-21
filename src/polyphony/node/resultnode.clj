@@ -36,8 +36,7 @@
   [result-node]
   (println "eval-result-clauses: ")
   (dorun (for [clause (:result-clauses result-node)]
-           (eval (substitute-variable-vals clause (:variables result-node))
-                 )
+           (eval (substitute-variable-vals clause (:variables result-node)))
            )
          )
   )
@@ -67,9 +66,10 @@
   ;; Only set input status if input-status is not currently true
   ;; In other words - only execute result first time input-status
   ;; is set to true
-  (if (not (:input-status @result-node-atom))
+  (when (not (:input-status @result-node-atom))
     (let [new-result-node (swap! result-node-atom set-result-input-val val)]
-      (eval-result-clauses new-result-node)
+      (when (:input-status new-result-node)
+        (eval-result-clauses new-result-node))
       )
     )
   )
