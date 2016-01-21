@@ -38,11 +38,6 @@
   variable-name
   )
 
-(defn get-variable
-  [variable-name]
-  nil
-  )
-
 (defn set-variable
   [var-name val]
   (println "set-variable1: " var-name val)

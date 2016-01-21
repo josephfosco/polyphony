@@ -18,6 +18,7 @@
    [polyphony.node-tree :refer [reset-node-tree]]
    [polyphony.reader :refer [add-rule-to-graph]]
    [polyphony.variables :refer [set-variable]]
+   [polyphony.version :refer [POLYPHONY-VERSION-STR]]
    )
   )
 
@@ -36,3 +37,6 @@
   []
   (reset-node-tree)
   )
+(println)
+(println "POLYPHONY rule library version: " POLYPHONY-VERSION-STR)
+(println)

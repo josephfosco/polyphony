@@ -1,4 +1,4 @@
-;    Copyright (C) 2015  Joseph Fosco. All Rights Reserved
+;    Copyright (C) 2015-2016  Joseph Fosco. All Rights Reserved
 ;
 ;    This program is free software: you can redistribute it and/or modify
 ;    it under the terms of the GNU General Public License as published by
@@ -15,13 +15,13 @@
 
 (ns polyphony.version)
 
-(def TRANSPORT-VERSION {:major 0
-                        :minor 1
+(def POLYPHONY-VERSION {:major 1
+                        :minor 0
                         :patch 0
-                        :development true})
+                        :development false})
 
-(def TRANSPORT-VERSION-STR
-  (let [version TRANSPORT-VERSION]
+(def POLYPHONY-VERSION-STR
+  (let [version POLYPHONY-VERSION]
     (str (:major version)
          "."
          (:minor version)
