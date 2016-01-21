@@ -29,7 +29,12 @@
    id-and-clause - a list with the first element the id for the
                    clause, and the second element the clause"
   [id-and-clause]
-  (CondNode. (first id-and-clause) (second id-and-clause) nil '{} '())
+  (CondNode. (first id-and-clause) (second id-and-clause) nil {} ())
+  )
+
+(defn reset-cond-node
+  [cond-node]
+  (assoc cond-node :variables {})
   )
 
 (defn- eval-cond-node

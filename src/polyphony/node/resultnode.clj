@@ -24,7 +24,12 @@
 (defn create-result-node
   "Used to create a new result-node"
   [input-id rslt-clauses]
-  (ResultNode. (gensym 'R_) input-id false rslt-clauses '{})
+  (ResultNode. (gensym 'R_) input-id false rslt-clauses {})
+  )
+
+(defn reset-result-node
+  [result-node]
+  (assoc result-node :variables {} :input-status false)
   )
 
 (defn eval-result-clauses

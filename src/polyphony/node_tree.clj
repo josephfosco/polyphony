@@ -15,7 +15,10 @@
 
 (ns polyphony.node-tree
   (:require
-   [polyphony.node.condnode :refer [set-cond-output set-cond-num-variables]]
+   [polyphony.node.condnode :refer [reset-cond-node set-cond-output
+                                    set-cond-num-variables]]
+   [polyphony.node.joinnode :refer [reset-join-node]]
+   [polyphony.node.resultnode :refer [reset-result-node]]
    [polyphony.utils :refer [sym-to-key]]
    )
   )
@@ -23,6 +26,16 @@
 (def all-conds (atom {}))
 (def all-joins (atom {}))
 (def all-results (atom {}))
+
+(defn reset-node-tree
+  []
+  (dorun (for [cond-atom (vals @all-conds)]
+           (swap! cond-atom reset-cond-node)))
+  (dorun (for [join-atom (vals @all-joins)]
+           (swap! join-atom reset-join-node)))
+  (dorun (for [result-atom (vals @all-results)]
+           (swap! result-atom reset-result-node)))
+  )
 
 (defn add-cond
   [new-cond-as-atom]
