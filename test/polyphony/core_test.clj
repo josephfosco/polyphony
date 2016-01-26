@@ -17,7 +17,7 @@
   (:use clojure.test
         polyphony.core
         )
-  (:require [ polyphony.utils :refer [sym-to-key]])
+  (:require [polyphony.utils :refer [sym-to-key]])
   )
 
 (defn clear-polyphony
@@ -50,14 +50,19 @@
                       @polyphony.variables/all-variables))))
   )
 
-(defn get-result-ids-for-cond-id
-  "Returns a list of result-ids for cond-id"
+(defn get-output-ids-for-cond-id
+  "Returns a list of output-ids for cond-id"
   [cond-id]
   (doall (for [output (:outputs
                        (deref ((sym-to-key cond-id)
                                @polyphony.node-tree/all-conds)))]
            (:id @output)
            ))
+  )
+
+(defn get-join-node
+  [join-id]
+  (deref ((sym-to-key join-id) @polyphony.node-tree/all-joins))
   )
 
 (defn get-result-node
@@ -67,16 +72,38 @@
 
 (deftest test-single-var-rule-to-result
   (let [cond-id (get-cond-id-for-var '?var1)
-        result-id (first (get-result-ids-for-cond-id cond-id))
+        result-id (first (get-output-ids-for-cond-id cond-id))
         ]
     (testing "single variable rule connects to result"
         (is (= (:input-id (get-result-node result-id)) cond-id))
       )
     ))
 
+(deftest test-two-rules-to-join-and-result
+  (let [cond-id-1 (get-cond-id-for-var '?var2)
+        cond-id-2 (get-cond-id-for-var '?var3)
+        output-id-1 (first (get-output-ids-for-cond-id cond-id-1))
+        output-id-2 (first (get-output-ids-for-cond-id cond-id-2))
+        left-input-id (:left-input-id (get-join-node output-id-1))
+        right-input-id (:right-input-id (get-join-node output-id-2))
+
+        ]
+    (testing "two rules connect to join and result"
+      ;; both conds should connect to same join
+      (is (= output-id-1 output-id-2))
+      ;; input of join should be the 2 conds
+      (is (or (= cond-id-1 left-input-id) (= cond-id-1 right-input-id)))
+      (is (or (= cond-id-2 left-input-id) (= cond-id-2 right-input-id)))
+      ;; join should output to result node and result node should connect to join
+      (is (= (:input-id (deref (:output-node (get-join-node output-id-1))))
+             output-id-1))
+      )
+    )
+  )
+
 (deftest test-cond-node-has-multiple-outputs
   (let [cond-id (get-cond-id-for-var '?var7)
-        result-ids (get-result-ids-for-cond-id cond-id)
+        result-ids (get-output-ids-for-cond-id cond-id)
         ]
     (testing "cond node has multiple outputs"
       (is (= (count result-ids) 2))
