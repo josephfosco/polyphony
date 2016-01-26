@@ -13,9 +13,9 @@
 ;    You should have received a copy of the GNU General Public License
 ;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(defproject polyphony "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject polyphony "1.0.0"
+  :description "Polyphony - a basic rule engine"
+  :url "https://github.com/josephfosco/polyphony"
   :license {:name "GNU General Public License version 3"
             :url "http://www.gnu.org/licenses/"}
   :dependencies [[org.clojure/clojure "1.5.1"]])

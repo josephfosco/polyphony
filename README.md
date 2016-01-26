@@ -1,13 +1,12 @@
 # polyphony
 
-A Clojure library designed to ... well, that part is up to you.
+A Clojure library designed to ... 
 
 ## Usage
 
-FIXME
 
 ## License
 
-Copyright © 2015 FIXME
+Copyright © 2015 Joseph Fosco
 
-Distributed under the Eclipse Public License, the same as Clojure.
+Distributed under the GNU General Public License

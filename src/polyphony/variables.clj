@@ -1,4 +1,4 @@
-;    Copyright (C) 2015  Joseph Fosco. All Rights Reserved
+;    Copyright (C) 2015-2016  Joseph Fosco. All Rights Reserved
 ;
 ;    This program is free software: you can redistribute it and/or modify
 ;    it under the terms of the GNU General Public License as published by
@@ -13,24 +13,40 @@
 ;    You should have received a copy of the GNU General Public License
 ;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(ns polyphony.variables)
+(ns polyphony.variables
+  [:require
+   [polyphony.node.condnode :refer [set-cond-atom-variable]]
+   [polyphony.node.resultnode :refer [set-result-atom-variable]]
+   [polyphony.utils :refer [sym-to-key]]
+   ]
+  )
 
+;; all-variables is a map where keys = variable names as keywords and
+;;   vals = a list of cond node ids that use the variable
 (def all-variables (atom {}))
 
 (defn- new-variable
-  [cur-variables variable-name rule-id]
+  [cur-variables variable-name node-atom]
   (assoc cur-variables
     (keyword (name variable-name))
-    (conj ((keyword (name variable-name)) cur-variables) (keyword rule-id)))
+    (conj ((keyword (name variable-name)) cur-variables) node-atom))
   )
 
 (defn add-variable
-  [variable-name rule-id]
-  (println "add-variable")
-  (swap! all-variables new-variable variable-name rule-id)
+  [variable-name node-atom]
+  (swap! all-variables new-variable variable-name node-atom)
+  variable-name
   )
 
-(defn get-variable
-  [variable-name]
-  nil
+(defn set-variable
+  [var-name val]
+  (println "set-variable1: " var-name val)
+  (dorun (for [output-atom ((sym-to-key var-name) @all-variables)]
+           (cond (.startsWith (name (:id @output-atom)) "C")
+                 (set-cond-atom-variable output-atom var-name val)
+                 (.startsWith (name (:id @output-atom)) "R")
+                 (set-result-atom-variable output-atom var-name val)
+                 )
+           ))
+  val
   )
