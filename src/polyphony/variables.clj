@@ -50,3 +50,13 @@
            ))
   val
   )
+
+(defn get-variable
+  "Returns the value af var-name
+
+   var-name - the variable to return the value for. Returns nil if not set"
+  [var-name]
+  (let [var-node (deref (first ((sym-to-key var-name) @all-variables)))]
+    ((sym-to-key var-name) (:variables var-node))
+   )
+  )

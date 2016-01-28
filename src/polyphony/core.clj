@@ -37,6 +37,12 @@
   []
   (reset-node-tree)
   )
+
+(defmacro get-variable-val
+  [var-name]
+  (polyphony.variables/get-variable var-name)
+  )
+
 (println)
 (println "POLYPHONY rule library version: " POLYPHONY-VERSION-STR)
 (println)

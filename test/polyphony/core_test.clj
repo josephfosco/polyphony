@@ -31,12 +31,17 @@
 (clear-polyphony)
 
 (defn rule-fixture
+  "For testing ?varx should never be set"
   [f]
   (defrule ((= ?var1 10)) (()))
   (defrule ((= ?var2 10) (= ?var3 10)) (()))
   (defrule ((= ?var4 10) (= ?var5 10) (= ?var6 10)) (()))
   (defrule ((= ?var7 10)) (()))
   (defrule ((= ?var7 10)) (()))
+  (defrule ((= ?var70 10) (?= varx 100)) (()))
+  (set-var ?var70 20)
+  (defrule ((?= varx 100)) ((set-var ?var71 10)))
+  (set-var ?var71 20)
   (f)
   )
 
@@ -113,3 +118,12 @@
              ))
       )
     ))
+
+(deftest test-get-variable-val
+  (testing "get-variable-val returns correct value in cond node"
+    (is (= (get-variable-val ?var70) 20))
+   )
+  (testing "get-variable-val returns correct value in result node"
+    (is (= (get-variable-val ?var71) 20))
+   )
+  )
