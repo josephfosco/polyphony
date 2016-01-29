@@ -39,9 +39,7 @@
   (defrule ((= ?var7 10)) (()))
   (defrule ((= ?var7 10)) (()))
   (defrule ((= ?var70 10) (?= varx 100)) (()))
-  (set-var ?var70 20)
   (defrule ((?= varx 100)) ((set-var ?var71 10)))
-  (set-var ?var71 20)
   (f)
   )
 
@@ -121,9 +119,11 @@
 
 (deftest test-get-variable-val
   (testing "get-variable-val returns correct value in cond node"
+    (set-var ?var70 20)
     (is (= (get-variable-val ?var70) 20))
-   )
+    )
   (testing "get-variable-val returns correct value in result node"
+    (set-var ?var71 20)
     (is (= (get-variable-val ?var71) 20))
-   )
+    )
   )

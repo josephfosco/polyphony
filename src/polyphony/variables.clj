@@ -40,7 +40,6 @@
 
 (defn set-variable
   [var-name val]
-  (println "set-variable1: " var-name val)
   (dorun (for [output-atom ((sym-to-key var-name) @all-variables)]
            (cond (.startsWith (name (:id @output-atom)) "C")
                  (set-cond-atom-variable output-atom var-name val)
