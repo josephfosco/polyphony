@@ -44,17 +44,17 @@
 
   "
   [cond-node]
-  (println "eval-cond-node")
-  (if (eval (substitute-variable-vals (:cond-clause cond-node)
-                                      (:variables cond-node))
-            )
-    true
-    false)
+  (let [new-clause (substitute-variable-vals (:cond-clause cond-node)
+                                             (:variables cond-node))]
+    (if (eval new-clause
+              )
+      true
+      false)
+    )
   )
 
 (defn- send-output-val
   [cond-node val]
-  (println "send-output-val")
   (dorun (for [output-node (:outputs cond-node)]
              (cond (.startsWith (name (:id @output-node)) "J")
                    (set-join-atom-output-val output-node (:id cond-node) val)
@@ -78,7 +78,6 @@
 
 (defn- set-cond-variable
   [cond-node var-name var-val]
-  (println "set-cond-variable: " var-name var-val)
   (assoc cond-node
     :variables
     (assoc (:variables cond-node)

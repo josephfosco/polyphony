@@ -47,16 +47,12 @@
 (declare set-join-atom-output-val)
 (defn- send-output-val
   [join-node val]
-  (println "join send-output-val")
   (cond (.startsWith (name (:id (deref (:output-node join-node)))) "J")
         (set-join-atom-output-val (:output-node join-node)
                                   (:id join-node)
                                   val)
         (.startsWith (name (:id (deref (:output-node join-node)))) "R")
-        (do
-          (println "join send-output-val: " (:output-node join-node))
-          (set-result-atom-input-val (:output-node join-node) val)
-          )
+        (set-result-atom-input-val (:output-node join-node) val)
         :else
         (throw (Throwable. "InvalidOutputNode"))
         )
@@ -64,7 +60,6 @@
 
 (defn set-join-output-val
   [join-node input-id val]
-  (println "set-join-output-val: " input-id val)
   (cond (= (:left-input-id join-node) input-id)
         (assoc join-node :left-input-status val)
         (= (:right-input-id join-node) input-id)
@@ -75,7 +70,6 @@
 
 (defn set-join-atom-output-val
   [join-node-atom input-id val]
-  (println "set-join-atom-output-val")
   (let [new-join-node (swap! join-node-atom set-join-output-val input-id val)]
     (when (and (= (:left-input-status new-join-node) true)
                (= (:right-input-status new-join-node) true)

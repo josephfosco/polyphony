@@ -34,7 +34,6 @@
 
 (defn eval-result-clauses
   [result-node]
-  (println "eval-result-clauses: ")
   (dorun (for [clause (:result-clauses result-node)]
            (eval (substitute-variable-vals clause (:variables result-node)))
            )
@@ -56,13 +55,11 @@
 
 (defn set-result-input-val
   [result-node val]
-  (println "set-result-input-val: " val)
   (assoc result-node :input-status val)
   )
 
 (defn set-result-atom-input-val
   [result-node-atom val]
-  (println "set-result-atom-input-val: " result-node-atom)
   ;; Only set input status if input-status is not currently true
   ;; In other words - only execute result first time input-status
   ;; is set to true
