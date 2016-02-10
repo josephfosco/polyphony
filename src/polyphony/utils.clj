@@ -35,3 +35,17 @@
              )
            ))
   )
+
+(defn substitute-result-variable-vals
+  [clause variable-dict new-clause]
+  (cond (= (first clause) 'set-var)
+        clause
+        :else
+        (doall (for [elem clause]
+                 (if (is-variable? elem)
+                   ((keyword (name elem)) variable-dict)
+                   elem
+                   )
+                 ))
+        )
+  )

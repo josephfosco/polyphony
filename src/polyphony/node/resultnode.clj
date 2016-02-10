@@ -15,7 +15,7 @@
 
 (ns polyphony.node.resultnode
   (:require
-   [polyphony.utils :refer [substitute-variable-vals]]
+   [polyphony.utils :refer [substitute-result-variable-vals]]
    )
   )
 
@@ -34,8 +34,13 @@
 
 (defn eval-result-clauses
   [result-node]
+  (println "eval-result-clauses enter")
   (dorun (for [clause (:result-clauses result-node)]
-           (eval (substitute-variable-vals clause (:variables result-node)))
+           (eval (substitute-result-variable-vals clause
+                                                  (:variables result-node)
+                                                  '()
+                                                  )
+                 )
            )
          )
   )

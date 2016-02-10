@@ -39,7 +39,9 @@
   (defrule ((= ?var7 10)) (()))
   (defrule ((= ?var7 10)) (()))
   (defrule ((= ?var70 10) (?= varx 100)) (()))
-  (defrule ((?= varx 100)) ((set-var ?var71 10)))
+  (defrule ((= ?varx 100)) ((set-var ?var71 10)))
+  (defrule ((= ?var72 10)) ((set-var ?var72 11)))
+  (defrule ((= ?var73 10) (= ?var74 10)) ((set-var ?var73 (+ ?var74 1))))
   (f)
   )
 
@@ -127,3 +129,15 @@
     (is (= (get-variable-val ?var71) 20))
     )
   )
+
+(deftest test-set-var-in-resultnode
+  (testing "set-var in result node when variable already set"
+    (set-var ?var72 10)
+    (is (= (get-variable-val ?var72) 11))
+    )
+    (testing "nested set-var in resultnode"
+      (set-var ?var73 10)
+      (set-var ?var74 10)
+      (is (= (get-variable-val ?var73) 11))
+      )
+    )
