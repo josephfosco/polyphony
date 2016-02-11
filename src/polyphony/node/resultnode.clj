@@ -34,13 +34,13 @@
 
 (defn eval-result-clauses
   [result-node]
-  (println "eval-result-clauses enter")
   (dorun (for [clause (:result-clauses result-node)]
-           (eval (substitute-result-variable-vals clause
-                                                  (:variables result-node)
-                                                  '()
-                                                  )
-                 )
+           (let [new-clause (substitute-result-variable-vals clause
+                                                    (:variables result-node)
+                                                    )
+                 ]
+             (eval new-clause )
+             )
            )
          )
   )

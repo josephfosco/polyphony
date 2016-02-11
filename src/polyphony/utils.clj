@@ -36,16 +36,19 @@
            ))
   )
 
-(defn substitute-result-variable-vals
-  [clause variable-dict new-clause]
-  (cond (= (first clause) 'set-var)
-        clause
+(declare substitute-result-variable-vals)
+(defn subst-var
+  [elem variable-dict clause-vec ndx]
+  (cond (and  (is-variable? elem) (not= (get clause-vec (dec ndx)) 'set-var))
+        ((keyword (name elem)) variable-dict)
+        (seq? elem)
+        (substitute-result-variable-vals elem variable-dict)
         :else
-        (doall (for [elem clause]
-                 (if (is-variable? elem)
-                   ((keyword (name elem)) variable-dict)
-                   elem
-                   )
-                 ))
-        )
+        elem
+    )
+  )
+
+(defn substitute-result-variable-vals
+  [clause variable-dict]
+  (map subst-var clause (repeat variable-dict) (repeat (vec clause)) (range))
   )

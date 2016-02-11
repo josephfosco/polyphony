@@ -38,15 +38,32 @@
    )
   )
 
+(declare find-result-variables)
+(defn add-result-vars
+  [elem result-node-as-atom clause-vec ndx ]
+  (cond (and  (is-variable? elem) (not= (get clause-vec (dec ndx)) 'set-var))
+        (add-variable elem result-node-as-atom)
+        (seq? elem)
+        (find-result-variables elem result-node-as-atom)
+    )
+  )
+
+(defn find-result-variables
+  [clause result-node-as-atom]
+  (dorun (map add-result-vars
+              clause
+              (repeat result-node-as-atom)
+              (repeat (vec clause))
+              (range)))
+  )
+
+
 (defn create-result-variables
   [result-node-as-atom]
   (println)
   (println "create-result-variables " (:result-clauses @result-node-as-atom))
   (dorun (for [result-clause (:result-clauses @result-node-as-atom)]
-           (dorun (for [tstvar result-clause
-                        :when (is-variable? tstvar)]
-                    (add-variable tstvar result-node-as-atom)
-                    ))))
+           (find-result-variables result-clause result-node-as-atom)))
   )
 
 (defn add-num-variables-to-cond

@@ -39,7 +39,7 @@
   (defrule ((= ?var7 10)) (()))
   (defrule ((= ?var7 10)) (()))
   (defrule ((= ?var70 10) (?= varx 100)) (()))
-  (defrule ((= ?varx 100)) ((set-var ?var71 10)))
+  (defrule ((= ?varx 100)) ((+ ?var71 10)))
   (defrule ((= ?var72 10)) ((set-var ?var72 11)))
   (defrule ((= ?var73 10) (= ?var74 10)) ((set-var ?var73 (+ ?var74 1))))
   (f)
