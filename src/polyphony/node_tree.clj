@@ -30,11 +30,11 @@
 (defn reset-node-tree
   []
   (dorun (for [cond-atom (vals @all-conds)]
-           (reset! cond-atom (assoc @cond-atom :variables {}))))
+           (reset! cond-atom (reset-cond-node @cond-atom))))
   (dorun (for [join-atom (vals @all-joins)]
-           (reset! join-atom (assoc @join-atom :variables {}))))
+           (reset! join-atom (reset-join-node @join-atom))))
   (dorun (for [result-atom (vals @all-results)]
-           (reset! result-atom (assoc @result-atom :variables {}))))
+           (reset! result-atom (reset-result-node @result-atom))))
   )
 
 (defn add-cond
