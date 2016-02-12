@@ -55,7 +55,7 @@
 
 (defn set-result-atom-variable
   [result-node-atom var-name val]
-  (swap! result-node-atom set-result-variable var-name val)
+  (reset! result-node-atom (set-result-variable @result-node-atom var-name val))
   )
 
 (defn set-result-input-val
@@ -69,7 +69,7 @@
   ;; In other words - only execute result first time input-status
   ;; is set to true
   (when (not (:input-status @result-node-atom))
-    (let [new-result-node (swap! result-node-atom set-result-input-val val)]
+    (let [new-result-node (reset! result-node-atom (set-result-input-val @result-node-atom val))]
       (when (:input-status new-result-node)
         (eval-result-clauses new-result-node))
       )

@@ -30,16 +30,16 @@
 (defn reset-node-tree
   []
   (dorun (for [cond-atom (vals @all-conds)]
-           (swap! cond-atom reset-cond-node)))
+           (reset! cond-atom (assoc @cond-atom :variables {}))))
   (dorun (for [join-atom (vals @all-joins)]
-           (swap! join-atom reset-join-node)))
+           (reset! join-atom (assoc @join-atom :variables {}))))
   (dorun (for [result-atom (vals @all-results)]
-           (swap! result-atom reset-result-node)))
+           (reset! result-atom (assoc @result-atom :variables {}))))
   )
 
 (defn add-cond
   [new-cond-as-atom]
-  (swap! all-conds assoc (keyword  (:id @new-cond-as-atom)) new-cond-as-atom)
+  (reset! all-conds (assoc @all-conds (keyword (:id @new-cond-as-atom)) new-cond-as-atom))
   )
 
 (defn get-cond-node
@@ -49,12 +49,12 @@
 
 (defn add-join
   [new-join-as-atom]
-  (swap! all-joins assoc (keyword  (:id @new-join-as-atom)) new-join-as-atom)
+  (reset! all-joins (assoc @all-joins (keyword (:id @new-join-as-atom)) new-join-as-atom))
   )
 
 (defn add-result
   [new-result]
-  (swap! all-results assoc (keyword  (:id @new-result)) new-result)
+  (reset! all-results (assoc @all-results (keyword (:id @new-result)) new-result))
   )
 
 (defn find-id-for-clause

@@ -70,7 +70,7 @@
 
 (defn set-join-atom-output-val
   [join-node-atom input-id val]
-  (let [new-join-node (swap! join-node-atom set-join-output-val input-id val)]
+  (let [new-join-node (reset! join-node-atom (set-join-output-val @join-node-atom input-id val))]
     (when (and (= (:left-input-status new-join-node) true)
                (= (:right-input-status new-join-node) true)
                )

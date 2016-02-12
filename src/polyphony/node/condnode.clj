@@ -86,7 +86,7 @@
 
 (defn set-cond-atom-variable
   [cond-node-atom var-name var-val]
-  (let [new-cond-node (swap! cond-node-atom set-cond-variable var-name var-val)]
+  (let [new-cond-node (reset! cond-node-atom (set-cond-variable @cond-node-atom var-name var-val))]
     (when (= (count (:variables new-cond-node)) (:num-variables new-cond-node))
       (send-output-val new-cond-node (eval-cond-node new-cond-node))
       )

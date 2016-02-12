@@ -73,9 +73,10 @@
    a list of vars in the cond"
   [cond-var-list]
   (println "add-variables-to-cond: " cond-var-list)
-  (swap! (first cond-var-list)
-         set-cond-num-variables
-         (second cond-var-list))
+  (reset! (first cond-var-list)
+          (set-cond-num-variables
+            (deref (first cond-var-list))
+            (second cond-var-list)))
   )
 
 (defn get-existing-conds
@@ -107,22 +108,30 @@
           ;; first time add first 2 clauses to join
           (do
             (add-join new-join)
-            (swap! new-join
-                   set-join-right-input-id
-                   (:id (deref (second cond-nodes-as-atoms))))
-            (swap! (first cond-nodes-as-atoms) set-cond-output new-join)
-            (swap! (second cond-nodes-as-atoms) set-cond-output new-join)
+            (reset! new-join
+                    (set-join-right-input-id
+                     @new-join
+                     (:id (deref (second cond-nodes-as-atoms)))))
+            (reset! (first cond-nodes-as-atoms)
+                    (set-cond-output (deref (first cond-nodes-as-atoms))
+                                     new-join))
+            (reset! (second cond-nodes-as-atoms)
+                    (set-cond-output (deref (second cond-nodes-as-atoms))
+                                     new-join))
             (recur new-join (rest (rest cond-nodes-as-atoms)))
             )
           :else
           ;; add join-node and first clause to new-join
           (do
             (add-join new-join)
-            (swap! (first cond-nodes-as-atoms) set-cond-output new-join)
-            (swap! new-join
-                   set-join-right-input-id
-                   (:id @join-node-as-atom))
-            (swap! join-node-as-atom set-join-output-node new-join)
+            (reset! (first cond-nodes-as-atoms)
+                    (set-cond-output (deref (first cond-nodes-as-atoms))
+                                     new-join))
+            (reset! new-join
+                    (set-join-right-input-id @new-join
+                                             (:id @join-node-as-atom)))
+            (reset! join-node-as-atom (set-join-output-node @join-node-as-atom
+                                                            new-join))
             (recur new-join (rest cond-nodes-as-atoms)))
           )
     )
@@ -141,9 +150,9 @@
   (let [rslt (atom (create-result-node (:id @input-clause-atom) rslt-clauses))]
     (add-result rslt)
     (cond (.startsWith (name (:id @input-clause-atom)) "C")
-          (swap! input-clause-atom set-cond-output rslt)
+          (reset! input-clause-atom (set-cond-output @input-clause-atom rslt))
           (.startsWith (name (:id @input-clause-atom)) "J")
-          (swap! input-clause-atom set-join-output-node rslt)
+          (reset! input-clause-atom (set-join-output-node @input-clause-atom rslt))
           :else
           (throw (Throwable. "InvalidNodeId"))
           )
