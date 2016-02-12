@@ -41,7 +41,9 @@
 (declare find-result-variables)
 (defn add-result-vars
   [elem result-node-as-atom clause-vec ndx ]
-  (cond (and  (is-variable? elem) (not= (get clause-vec (dec ndx)) 'set-var))
+  (cond (and  (is-variable? elem) (not (.endsWith (name (get clause-vec
+                                                             (dec ndx)))
+                                                  "set-var")))
         (add-variable elem result-node-as-atom)
         (seq? elem)
         (find-result-variables elem result-node-as-atom)

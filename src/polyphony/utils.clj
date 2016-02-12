@@ -39,7 +39,9 @@
 (declare substitute-result-variable-vals)
 (defn subst-var
   [elem variable-dict clause-vec ndx]
-  (cond (and  (is-variable? elem) (not= (get clause-vec (dec ndx)) 'set-var))
+  (cond (and  (is-variable? elem) (not (.endsWith (name (get clause-vec
+                                                             (dec ndx)))
+                                                  "set-var")))
         ((keyword (name elem)) variable-dict)
         (seq? elem)
         (substitute-result-variable-vals elem variable-dict)
