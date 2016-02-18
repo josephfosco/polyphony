@@ -33,8 +33,8 @@
            (reset! cond-atom (reset-cond-node @cond-atom))))
   (dorun (for [join-atom (vals @all-joins)]
            (reset! join-atom (reset-join-node @join-atom))))
-  (dorun (for [result-atom (vals @all-results)]
-           (reset! result-atom (reset-result-node @result-atom))))
+  ;; (dorun (for [result-atom (vals @all-results)]
+  ;;       (reset! result-atom (reset-result-node @result-atom))  ))
   )
 
 (defn add-cond

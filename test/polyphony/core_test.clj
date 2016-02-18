@@ -22,6 +22,7 @@
 
 (defn clear-polyphony
   []
+  (reset! polyphony.core/reset-num 0)
   (reset! polyphony.node-tree/all-conds {})
   (reset! polyphony.node-tree/all-joins {})
   (reset! polyphony.node-tree/all-results {})
@@ -42,6 +43,7 @@
   (defrule ((= ?varx 100)) ((+ ?var71 10)))
   (defrule ((= ?var72 10)) ((set-var ?var72 11)))
   (defrule ((= ?var73 10) (= ?var74 10)) ((set-var ?var73 (+ ?var74 1))))
+  (defrule ((= ?var75 10) (> ?var76 10)) ((set-var ?var76 (+ ?var75 1))))
   (f)
   )
 
@@ -73,6 +75,35 @@
 (defn get-result-node
   [result-id]
   (deref ((sym-to-key result-id) @polyphony.node-tree/all-results))
+  )
+
+(defn get-result-node-from-var
+  [var-name]
+  (deref
+   (first
+    (take 1
+          (for [node ((sym-to-key var-name) @polyphony.variables/all-variables)
+                :when (.startsWith (name (:id @node)) "R")
+                ]
+            node
+            ))))
+  )
+
+(defn get-cond-node-from-var
+  [var-name]
+  (deref
+   (first
+    (take 1
+          (for [node ((sym-to-key var-name) @polyphony.variables/all-variables)
+                :when (.startsWith (name (:id @node)) "C")
+                ]
+            node
+            ))))
+  )
+
+(defn get-var-val-from-node
+  [node var-name]
+  ((sym-to-key var-name) (:variables node))
   )
 
 (deftest test-single-var-rule-to-result
@@ -135,9 +166,22 @@
     (set-var ?var72 10)
     (is (= (get-variable-val ?var72) 11))
     )
-    (testing "nested set-var in resultnode"
-      (set-var ?var73 10)
-      (set-var ?var74 10)
-      (is (= (get-variable-val ?var73) 11))
-      )
+  (testing "nested set-var in resultnode"
+    (set-var ?var73 10)
+    (set-var ?var74 10)
+    (is (= (get-variable-val ?var73) 11))
     )
+  )
+
+(deftest test-reset-check
+  (testing "reset node-tree and make certain nodes update when necessary"
+    (set-var ?var75 11)
+    (set-var ?var76 10)
+    (is (= 12 (get-var-val-from-node (get-cond-node-from-var '?var76) '?var76)))
+    (reset-variable-vals)
+    (println "TEST reset-variable-vals done")
+    (set-var ?var75 20)
+    (set-var ?var76 10)
+    (is (= 21 (get-var-val-from-node (get-cond-node-from-var '?var76) '?var76)))
+    )
+  )

@@ -44,7 +44,10 @@
   (cond (and  (is-variable? elem) (not (.endsWith (name (get clause-vec
                                                              (dec ndx)))
                                                   "set-var")))
-        (add-variable elem result-node-as-atom)
+        (do
+          (println "adding result var: " elem)
+          (add-variable elem result-node-as-atom)
+          )
         (seq? elem)
         (find-result-variables elem result-node-as-atom)
     )
@@ -52,6 +55,7 @@
 
 (defn find-result-variables
   [clause result-node-as-atom]
+  (println "find-result-variables clause: " clause)
   (dorun (map add-result-vars
               clause
               (repeat result-node-as-atom)

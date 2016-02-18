@@ -39,12 +39,12 @@
   )
 
 (defn set-variable
-  [var-name val]
+  [var-name val reset-num]
   (dorun (for [output-atom ((sym-to-key var-name) @all-variables)]
            (cond (.startsWith (name (:id @output-atom)) "C")
-                 (set-cond-atom-variable output-atom var-name val)
+                 (set-cond-atom-variable output-atom var-name val reset-num)
                  (.startsWith (name (:id @output-atom)) "R")
-                 (set-result-atom-variable output-atom var-name val)
+                 (set-result-atom-variable output-atom var-name val reset-num)
                  )
            ))
   val

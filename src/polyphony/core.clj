@@ -22,6 +22,8 @@
    )
   )
 
+(def reset-num (atom 0))
+
 (defmacro defrule
   [cond-clauses rslt-clauses]
   (add-rule-to-graph cond-clauses rslt-clauses)
@@ -30,11 +32,14 @@
 
 (defmacro set-var
   [var-name var-val]
-  `(set-variable '~var-name ~var-val)
+  `(set-variable '~var-name ~var-val '~(deref reset-num))
   )
 
 (defn reset-variable-vals
   []
+  (println "reset-variable-vals reset-num before: " reset-num)
+  (reset! reset-num (inc @reset-num))
+  (println "reset-variable-vals reset-num after: " reset-num)
   (reset-node-tree)
   )
 

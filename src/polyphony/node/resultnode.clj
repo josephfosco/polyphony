@@ -19,12 +19,13 @@
    )
   )
 
-(defrecord ResultNode [id input-id input-status result-clauses variables])
+(defrecord ResultNode [id input-id input-status result-clauses variables
+                       reset-num])
 
 (defn create-result-node
   "Used to create a new result-node"
   [input-id rslt-clauses]
-  (ResultNode. (gensym 'R_) input-id false rslt-clauses {})
+  (ResultNode. (gensym 'R_) input-id false rslt-clauses {} 0)
   )
 
 (defn reset-result-node
@@ -54,22 +55,27 @@
   )
 
 (defn set-result-atom-variable
-  [result-node-atom var-name val]
+  [result-node-atom var-name val reset-num]
   (reset! result-node-atom (set-result-variable @result-node-atom var-name val))
   )
 
-(defn set-result-input-val
-  [result-node val]
+(defn- set-result-input-val
+  [result-node val reset-num]
   (assoc result-node :input-status val)
   )
 
 (defn set-result-atom-input-val
-  [result-node-atom val]
+  [result-node-atom val reset-num]
   ;; Only set input status if input-status is not currently true
   ;; In other words - only execute result first time input-status
   ;; is set to true
-  (when (not (:input-status @result-node-atom))
-    (let [new-result-node (reset! result-node-atom (set-result-input-val @result-node-atom val))]
+  (when (or (not= reset-num (:reset-num @result-node-atom))
+            (not (:input-status @result-node-atom)))
+    (let [new-result-node (reset! result-node-atom
+                                  (set-result-input-val @result-node-atom
+                                                        val
+                                                        reset-num))]
+      (println "RESET INPUT VAL")
       (when (:input-status new-result-node)
         (eval-result-clauses new-result-node))
       )

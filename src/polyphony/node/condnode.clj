@@ -15,7 +15,7 @@
 
 (ns polyphony.node.condnode
   (:require
-   [polyphony.node.joinnode :refer [set-join-atom-output-val]]
+   [polyphony.node.joinnode :refer [set-join-atom-input-val]]
    [polyphony.node.resultnode :refer [set-result-atom-input-val]]
    [polyphony.utils :refer [is-variable? substitute-variable-vals sym-to-key]]
    )
@@ -54,12 +54,12 @@
   )
 
 (defn- send-output-val
-  [cond-node val]
+  [cond-node val reset-num]
   (dorun (for [output-node (:outputs cond-node)]
              (cond (.startsWith (name (:id @output-node)) "J")
-                   (set-join-atom-output-val output-node (:id cond-node) val)
+                   (set-join-atom-input-val output-node (:id cond-node) val reset-num)
                    (.startsWith (name (:id @output-node)) "R")
-                   (set-result-atom-input-val output-node val)
+                   (set-result-atom-input-val output-node val reset-num)
                    :else
                    (throw (Throwable. "InvalidOutputNode"))
                    )
@@ -85,10 +85,12 @@
   )
 
 (defn set-cond-atom-variable
-  [cond-node-atom var-name var-val]
-  (let [new-cond-node (reset! cond-node-atom (set-cond-variable @cond-node-atom var-name var-val))]
+  [cond-node-atom var-name var-val reset-num]
+  (let [new-cond-node (reset! cond-node-atom
+                              (set-cond-variable @cond-node-atom
+                                                 var-name var-val))]
     (when (= (count (:variables new-cond-node)) (:num-variables new-cond-node))
-      (send-output-val new-cond-node (eval-cond-node new-cond-node))
+      (send-output-val new-cond-node (eval-cond-node new-cond-node) reset-num)
       )
     )
   )
