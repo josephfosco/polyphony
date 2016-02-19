@@ -43,7 +43,8 @@
   (defrule ((= ?varx 100)) ((+ ?var71 10)))
   (defrule ((= ?var72 10)) ((set-var ?var72 11)))
   (defrule ((= ?var73 10) (= ?var74 10)) ((set-var ?var73 (+ ?var74 1))))
-  (defrule ((= ?var75 10) (> ?var76 10)) ((set-var ?var76 (+ ?var75 1))))
+  (defrule ((> ?var75 100)) (()))
+  (defrule ((> ?var76 10)) ((set-var ?var75 (- ?var76 10))))
   (f)
   )
 
@@ -175,13 +176,10 @@
 
 (deftest test-reset-check
   (testing "reset node-tree and make certain nodes update when necessary"
-    (set-var ?var75 11)
-    (set-var ?var76 10)
-    (is (= 12 (get-var-val-from-node (get-cond-node-from-var '?var76) '?var76)))
+    (set-var ?var76 12)
+    (is (= 2 (get-var-val-from-node (get-cond-node-from-var '?var75) '?var75)))
     (reset-variable-vals)
-    (println "TEST reset-variable-vals done")
-    (set-var ?var75 20)
-    (set-var ?var76 10)
-    (is (= 21 (get-var-val-from-node (get-cond-node-from-var '?var76) '?var76)))
+    (set-var ?var76 20)
+    (is (= 10 (get-var-val-from-node (get-cond-node-from-var '?var75) '?var75)))
     )
   )

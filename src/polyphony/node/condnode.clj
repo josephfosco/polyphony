@@ -56,13 +56,13 @@
 (defn- send-output-val
   [cond-node val reset-num]
   (dorun (for [output-node (:outputs cond-node)]
-             (cond (.startsWith (name (:id @output-node)) "J")
-                   (set-join-atom-input-val output-node (:id cond-node) val reset-num)
-                   (.startsWith (name (:id @output-node)) "R")
-                   (set-result-atom-input-val output-node val reset-num)
-                   :else
-                   (throw (Throwable. "InvalidOutputNode"))
-                   )
+           (cond (.startsWith (name (:id @output-node)) "J")
+                 (set-join-atom-input-val output-node (:id cond-node) val reset-num)
+                 (.startsWith (name (:id @output-node)) "R")
+                 (set-result-atom-input-val output-node val reset-num)
+                 :else
+                 (throw (Throwable. "InvalidOutputNode"))
+                 )
            ))
  )
 

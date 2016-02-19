@@ -75,7 +75,6 @@
                                   (set-result-input-val @result-node-atom
                                                         val
                                                         reset-num))]
-      (println "RESET INPUT VAL")
       (when (:input-status new-result-node)
         (eval-result-clauses new-result-node))
       )
