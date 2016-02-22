@@ -66,8 +66,9 @@
 
 (defn set-result-atom-input-val
   [result-node-atom val reset-num]
-  ;; Only set input status if input-status is not currently true
-  ;; In other words - only execute result first time input-status
+  ;; Only set input status if the node needs to be reset or
+  ;; the input-status is not currently true
+  ;; This will only execute result first time input-status
   ;; is set to true
   (when (or (not= reset-num (:reset-num @result-node-atom))
             (not (:input-status @result-node-atom)))

@@ -31,10 +31,14 @@
   []
   (dorun (for [cond-atom (vals @all-conds)]
            (reset! cond-atom (reset-cond-node @cond-atom))))
-  (dorun (for [join-atom (vals @all-joins)]
-           (reset! join-atom (reset-join-node @join-atom))))
-  ;; (dorun (for [result-atom (vals @all-results)]
-  ;;       (reset! result-atom (reset-result-node @result-atom))  ))
+  (comment
+    (dorun (for [join-atom (vals @all-joins)]
+             (reset! join-atom (reset-join-node @join-atom))))
+    )
+  (comment
+    (dorun (for [result-atom (vals @all-results)]
+             (reset! result-atom (reset-result-node @result-atom))  ))
+    )
   )
 
 (defn add-cond

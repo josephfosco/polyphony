@@ -45,6 +45,8 @@
   (defrule ((= ?var73 10) (= ?var74 10)) ((set-var ?var73 (+ ?var74 1))))
   (defrule ((> ?var75 100)) (()))
   (defrule ((> ?var76 10)) ((set-var ?var75 (- ?var76 10))))
+  (defrule ((> ?var77 100)) (()))
+  (defrule ((> ?var78 10) (= ?var79 10)) ((set-var ?var77 (- ?var78 10))))
   (f)
   )
 
@@ -175,11 +177,19 @@
   )
 
 (deftest test-reset-check
-  (testing "reset node-tree and make certain nodes update when necessary"
+  (testing "reset node-tree and make certain result nodes update when necessary"
     (set-var ?var76 12)
     (is (= 2 (get-var-val-from-node (get-cond-node-from-var '?var75) '?var75)))
     (reset-variable-vals)
     (set-var ?var76 20)
     (is (= 10 (get-var-val-from-node (get-cond-node-from-var '?var75) '?var75)))
+    )
+  (testing "reset node-tree and make certain join nodes update when necessary"
+    (set-var ?var78 12)
+    (set-var ?var79 10)
+    (is (= 2 (get-var-val-from-node (get-cond-node-from-var '?var77) '?var77)))
+    (reset-variable-vals)
+    (set-var ?var78 20)
+    (is (= nil (get-var-val-from-node (get-cond-node-from-var '?var77) '?var77)))
     )
   )
