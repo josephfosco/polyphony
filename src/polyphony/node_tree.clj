@@ -27,20 +27,6 @@
 (def all-joins (atom {}))
 (def all-results (atom {}))
 
-(defn reset-node-tree
-  []
-  (dorun (for [cond-atom (vals @all-conds)]
-           (reset! cond-atom (reset-cond-node @cond-atom))))
-  (comment
-    (dorun (for [join-atom (vals @all-joins)]
-             (reset! join-atom (reset-join-node @join-atom))))
-    )
-  (comment
-    (dorun (for [result-atom (vals @all-results)]
-             (reset! result-atom (reset-result-node @result-atom))  ))
-    )
-  )
-
 (defn add-cond
   [new-cond-as-atom]
   (reset! all-conds (assoc @all-conds (keyword (:id @new-cond-as-atom)) new-cond-as-atom))

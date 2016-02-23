@@ -15,7 +15,6 @@
 
 (ns polyphony.core
   (:require
-   [polyphony.node-tree :refer [reset-node-tree]]
    [polyphony.reader :refer [add-rule-to-graph]]
    [polyphony.variables :refer [get-variable set-variable]]
    [polyphony.version :refer [POLYPHONY-VERSION-STR]]
@@ -38,7 +37,6 @@
 (defn reset-variable-vals
   []
   (reset! reset-num (inc @reset-num))
-  (reset-node-tree)
   )
 
 (defmacro get-variable-val

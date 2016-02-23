@@ -20,12 +20,12 @@
   )
 
 (defrecord JoinNode [id left-input-id left-input-status right-input-id
-                     right-input-status output-node])
+                     right-input-status output-node reset-num])
 
 (defn create-join-node
   "Used to create a new join-node"
   [left-input-id]
-  (JoinNode. (gensym 'J_) left-input-id false nil false nil)
+  (JoinNode. (gensym 'J_) left-input-id false nil false nil 0)
   )
 
 (defn reset-join-node

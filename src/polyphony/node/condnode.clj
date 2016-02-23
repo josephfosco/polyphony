@@ -21,7 +21,7 @@
    )
   )
 
-(defrecord CondNode [id cond-clause num-variables variables outputs])
+(defrecord CondNode [id cond-clause num-variables variables outputs reset-num])
 
 (defn create-cond-node
   "Used to create a new cond-node
@@ -29,7 +29,7 @@
    id-and-clause - a list with the first element the id for the
                    clause, and the second element the clause"
   [id-and-clause]
-  (CondNode. (first id-and-clause) (second id-and-clause) nil {} ())
+  (CondNode. (first id-and-clause) (second id-and-clause) nil {} () 0)
   )
 
 (defn reset-cond-node
@@ -77,18 +77,24 @@
   )
 
 (defn- set-cond-variable
-  [cond-node var-name var-val]
-  (assoc cond-node
-    :variables
-    (assoc (:variables cond-node)
-      (keyword var-name) var-val))
+  [cond-node var-name var-val reset-num]
+  (if (= reset-num (:reset-num cond-node))
+    (assoc cond-node
+      :variables
+      (assoc (:variables cond-node)
+        (keyword var-name) var-val))
+    (assoc cond-node
+      :reset-num reset-num
+      :variables (hash-map (keyword var-name) var-val))
+    )
   )
 
 (defn set-cond-atom-variable
   [cond-node-atom var-name var-val reset-num]
   (let [new-cond-node (reset! cond-node-atom
                               (set-cond-variable @cond-node-atom
-                                                 var-name var-val))]
+                                                 var-name var-val
+                                                 reset-num))]
     (when (= (count (:variables new-cond-node)) (:num-variables new-cond-node))
       (send-output-val new-cond-node (eval-cond-node new-cond-node) reset-num)
       )

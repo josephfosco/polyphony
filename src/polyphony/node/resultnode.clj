@@ -40,7 +40,7 @@
                                                     (:variables result-node)
                                                     )
                  ]
-             (eval new-clause )
+             (eval new-clause)
              )
            )
          )
