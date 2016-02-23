@@ -35,6 +35,7 @@
 (defn add-variable
   [variable-name node-atom]
   (swap! all-variables new-variable variable-name node-atom)
+  (intern (ns-name *ns*) variable-name (atom nil))
   variable-name
   )
 
