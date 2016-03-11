@@ -17,6 +17,7 @@
   (:require
    [polyphony.reader :refer [add-rule-to-graph]]
    [polyphony.variables :refer [get-variable set-variable]]
+   [polyphony.utils :refer [subst-atoms-for-vars]]
    [polyphony.version :refer [POLYPHONY-VERSION-STR]]
    )
   )
@@ -31,7 +32,11 @@
 
 (defmacro set-var
   [var-name var-val]
-  `(set-variable '~var-name ~var-val (deref reset-num))
+  `(let [val# ~(if (seq? var-val) (subst-atoms-for-vars var-val) var-val)]
+     (reset! ~(symbol (str "polyphony.variables/" (name var-name)))
+             val#)
+     (set-variable '~var-name val# (deref reset-num))
+     )
   )
 
 (defn reset-variable-vals

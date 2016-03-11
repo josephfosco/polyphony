@@ -40,36 +40,36 @@
 
 (declare find-result-variables)
 (defn add-result-vars
-  [elem result-node-as-atom clause-vec ndx ]
+  [elem clause-vec ndx]
+  (println "add-result-vars: " elem)
   (cond (and  (is-variable? elem) (not (.endsWith (name (get clause-vec
                                                              (dec ndx)))
                                                   "set-var")))
         (do
           (println "adding result var: " elem)
-          (add-variable elem result-node-as-atom)
+          (add-variable elem nil)
           )
         (seq? elem)
-        (find-result-variables elem result-node-as-atom)
+        (find-result-variables elem)
     )
   )
 
 (defn find-result-variables
-  [clause result-node-as-atom]
+  [clause]
   (println "find-result-variables clause: " clause)
   (dorun (map add-result-vars
               clause
-              (repeat result-node-as-atom)
               (repeat (vec clause))
               (range)))
   )
 
 
 (defn create-result-variables
-  [result-node-as-atom]
+  [result-clauses]
   (println)
-  (println "create-result-variables " (:result-clauses @result-node-as-atom))
-  (dorun (for [result-clause (:result-clauses @result-node-as-atom)]
-           (find-result-variables result-clause result-node-as-atom)))
+  (println "create-result-variables " result-clauses)
+  (dorun (for [result-clause result-clauses]
+           (find-result-variables result-clause)))
   )
 
 (defn add-num-variables-to-cond
@@ -151,6 +151,7 @@
 
 (defn- graph-result-clauses
   [rslt-clauses input-clause-atom]
+  (println "graph-result-clauses")
   (let [rslt (atom (create-result-node (:id @input-clause-atom) rslt-clauses))]
     (add-result rslt)
     (cond (.startsWith (name (:id @input-clause-atom)) "C")
@@ -183,11 +184,11 @@
     (dorun (map add-num-variables-to-cond
                 (map create-cond-variables new-cond-nodes))
            )
+    (create-result-variables rslt-clauses)
     (->> new-cond-nodes
          (into existing-cond-nodes)
          (graph-cond-clauses)
          (graph-result-clauses rslt-clauses)
-         (create-result-variables)
          )
     )
   )

@@ -15,48 +15,35 @@
 
 (ns polyphony.node.resultnode
   (:require
-   [polyphony.utils :refer [substitute-result-variable-vals]]
+   [polyphony.utils :refer [compile-clauses substitute-result-variable-vals]]
    )
   )
 
-(defrecord ResultNode [id input-id input-status result-clauses variables
+(defrecord ResultNode [id input-id input-status result-clauses compiled-clauses
                        reset-num])
 
 (defn create-result-node
   "Used to create a new result-node"
   [input-id rslt-clauses]
-  (ResultNode. (gensym 'R_) input-id false rslt-clauses {} 0)
+  (ResultNode. (gensym 'R_) input-id false rslt-clauses
+               (compile-clauses rslt-clauses) 0)
   )
 
 (defn reset-result-node
   [result-node]
-  (assoc result-node :variables {} :input-status false)
+  (assoc result-node :input-status false)
   )
 
 (defn eval-result-clauses
   [result-node]
-  (dorun (for [clause (:result-clauses result-node)]
-           (let [new-clause (substitute-result-variable-vals clause
-                                                    (:variables result-node)
-                                                    )
-                 ]
-             (eval new-clause)
+  (println "eval-result-clauses" result-node)
+  (dorun (for [clause (:compiled-clauses result-node)]
+           (do
+             (println clause)
+             (clause)
              )
            )
          )
-  )
-
-(defn- set-result-variable
-  [result-node var-name var-val]
-  (assoc result-node
-    :variables
-    (assoc (:variables result-node)
-      (keyword var-name) var-val))
-  )
-
-(defn set-result-atom-variable
-  [result-node-atom var-name val reset-num]
-  (reset! result-node-atom (set-result-variable @result-node-atom var-name val))
   )
 
 (defn- set-result-input-val

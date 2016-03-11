@@ -19,9 +19,9 @@
 
 (defn variables-fixture
   [f]
-  (add-variable '?var1 (atom {:id 'node1}))
-  (add-variable '?var2 (atom {:id 'node2}))
-  (add-variable '?var3 (atom {:id 'node3}))
+  (add-variable '?v-var1 (atom {:id 'node1}))
+  (add-variable '?v-var2 (atom {:id 'node2}))
+  (add-variable '?v-var3 (atom {:id 'node3}))
   (f)
   (reset! all-variables {})
   )
@@ -36,9 +36,9 @@
 (deftest test-contents-of-variables
   (testing "contents of variables"
     (is (= 'node1
-           (:id (deref (first ((keyword (name '?var1)) @all-variables))))))
+           (:id (deref (first ((keyword (name '?v-var1)) @all-variables))))))
     (is (= 'node2
-           (:id (deref (first ((keyword (name '?var2)) @all-variables))))))
+           (:id (deref (first ((keyword (name '?v-var2)) @all-variables))))))
     (is (= 'node3
-           (:id (deref (first ((keyword (name '?var3)) @all-variables))))))
+           (:id (deref (first ((keyword (name '?v-var3)) @all-variables))))))
     ))

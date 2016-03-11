@@ -16,7 +16,6 @@
 (ns polyphony.variables
   [:require
    [polyphony.node.condnode :refer [set-cond-atom-variable]]
-   [polyphony.node.resultnode :refer [set-result-atom-variable]]
    [polyphony.utils :refer [sym-to-key]]
    ]
   )
@@ -34,8 +33,9 @@
 
 (defn add-variable
   [variable-name node-atom]
-  (swap! all-variables new-variable variable-name node-atom)
-  (intern (ns-name *ns*) variable-name (atom nil))
+  (if (not (nil? node-atom))
+    (swap! all-variables new-variable variable-name node-atom))
+  (intern (ns-name 'polyphony.variables) variable-name (atom nil))
   variable-name
   )
 
@@ -44,8 +44,6 @@
   (dorun (for [output-atom ((sym-to-key var-name) @all-variables)]
            (cond (.startsWith (name (:id @output-atom)) "C")
                  (set-cond-atom-variable output-atom var-name val reset-num)
-                 (.startsWith (name (:id @output-atom)) "R")
-                 (set-result-atom-variable output-atom var-name val reset-num)
                  )
            ))
   val

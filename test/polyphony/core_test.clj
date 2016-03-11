@@ -39,6 +39,7 @@
   (defrule ((= ?var4 10) (= ?var5 10) (= ?var6 10)) (()))
   (defrule ((= ?var7 10)) (()))
   (defrule ((= ?var7 10)) (()))
+  (defrule ((= ?var8 10)) (()))
   (defrule ((= ?var70 10) (= ?varx 100)) (()))
   (defrule ((= ?varx 100)) ((+ ?var71 10)))
   (defrule ((= ?var72 10)) ((set-var ?var72 11)))
@@ -47,6 +48,7 @@
   (defrule ((> ?var76 10)) ((set-var ?var75 (- ?var76 10))))
   (defrule ((> ?var77 100)) (()))
   (defrule ((> ?var78 10) (= ?var79 10)) ((set-var ?var77 (- ?var78 10))))
+  (defrule ((= ?var84 0)) (()))
   (defrule ((> ?var80 100) (= ?var83 ?var80)) ((set-var ?var84 10)))
   (defrule ((> ?var81 10) (= ?var82 10)) ((set-var ?var80 (- ?var81 10))))
   (f)
@@ -162,14 +164,14 @@
     )
   (testing "get-variable-val returns correct value in result node"
     (set-var ?var71 20)
-    (is (= (get-variable-val ?var71) 20))
+    (is (= @polyphony.variables/?var71 20))
     )
   )
 
 (deftest test-set-var-in-resultnode
   (testing "set-var in result node when variable already set"
     (set-var ?var72 10)
-    (is (= (get-variable-val ?var72) 11))
+    (is (= @polyphony.variables/?var72 11))
     )
   (testing "nested set-var in resultnode"
     (set-var ?var73 10)
