@@ -36,12 +36,8 @@
 
 (defn eval-result-clauses
   [result-node]
-  (println "eval-result-clauses" result-node)
   (dorun (for [clause (:compiled-clauses result-node)]
-           (do
-             (println clause)
-             (clause)
-             )
+           (clause)
            )
          )
   )
