@@ -47,7 +47,7 @@
 
 (defn clause-to-fn
   [clause]
-  (println "clause-to-fn")
+  (println "clause-to-fn: " clause)
   (let [clause-with-atoms (subst-atoms-for-vars clause)
         new-clause (if (= (first clause) 'set-var)
                      (list 'fn [] (conj (rest clause) 'polyphony.core/set-var))
@@ -62,7 +62,7 @@
 
 (defn compile-clauses
   [clauses]
-  (println "compile-clauses")
+  (println "compile-clauses: " clauses)
   (doall (for [clause clauses]
            (let [new-clause (clause-to-fn clause)]
              (println "compile-clauses: " new-clause)

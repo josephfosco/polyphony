@@ -157,6 +157,13 @@
       )
     ))
 
+(deftest test-rule-with-multiple-results
+  (testing "both results fire with multiple results"
+    (println "NOT IMPLEMENTED!! - test-rule-with-multiple-results")
+    (is (= 1 1))
+    )
+  )
+
 (deftest test-get-variable-val
   (testing "get-variable-val returns correct value in cond node"
     (set-var ?var70 20)

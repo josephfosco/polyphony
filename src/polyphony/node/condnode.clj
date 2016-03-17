@@ -17,11 +17,13 @@
   (:require
    [polyphony.node.joinnode :refer [set-join-atom-input-val]]
    [polyphony.node.resultnode :refer [set-result-atom-input-val]]
-   [polyphony.utils :refer [is-variable? substitute-variable-vals sym-to-key]]
+   [polyphony.utils :refer [compile-clauses is-variable? substitute-variable-vals
+                            sym-to-key]]
    )
   )
 
-(defrecord CondNode [id cond-clause num-variables variables outputs reset-num])
+(defrecord CondNode [id cond-clause compiled-clauses num-variables variables
+                     outputs reset-num])
 
 (defn create-cond-node
   "Used to create a new cond-node
@@ -29,7 +31,9 @@
    id-and-clause - a list with the first element the id for the
                    clause, and the second element the clause"
   [id-and-clause]
-  (CondNode. (first id-and-clause) (second id-and-clause) nil {} () 0)
+  (println "create-cond-node: " id-and-clause)
+  (CondNode. (first id-and-clause) (second id-and-clause)
+             (compile-clauses (list (second id-and-clause))) nil {} () 0)
   )
 
 (defn reset-cond-node

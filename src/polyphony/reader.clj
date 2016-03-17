@@ -38,38 +38,38 @@
    )
   )
 
-(declare find-result-variables)
-(defn add-result-vars
+(declare find-variables)
+(defn add-vars
   [elem clause-vec ndx]
-  (println "add-result-vars: " elem)
+  (println "add-vars: " elem)
   (cond (and  (is-variable? elem) (not (.endsWith (name (get clause-vec
                                                              (dec ndx)))
                                                   "set-var")))
         (do
-          (println "adding result var: " elem)
+          (println "adding var: " elem)
           (add-variable elem nil)
           )
         (seq? elem)
-        (find-result-variables elem)
+        (find-variables elem)
     )
   )
 
-(defn find-result-variables
+(defn find-variables
   [clause]
-  (println "find-result-variables clause: " clause)
-  (dorun (map add-result-vars
+  (println "find-variables clause: " clause)
+  (dorun (map add-vars
               clause
               (repeat (vec clause))
               (range)))
   )
 
 
-(defn create-result-variables
-  [result-clauses]
+(defn create-variables
+  [clauses]
   (println)
-  (println "create-result-variables " result-clauses)
-  (dorun (for [result-clause result-clauses]
-           (find-result-variables result-clause)))
+  (println "create-variables " clauses)
+  (dorun (for [clause clauses]
+           (find-variables clause)))
   )
 
 (defn add-num-variables-to-cond
@@ -170,25 +170,28 @@
   (let [existing-conds (get-existing-conds cond-clauses)
         new-conds (new-clause cond-clauses)
         existing-cond-nodes (map get-cond-node (map first existing-conds))
-        new-cond-nodes (map atom (map create-cond-node new-conds))
-         ]
+        ]
 
-    (println)
-    (println "existing-conds: " existing-conds)
-    (println "new-conds: " new-conds)
-    (println "existing-cond-nodes: " existing-cond-nodes)
-    (println "new-cond-nodes: " new-cond-nodes)
-    (println)
+    (create-variables (doall (map list (map second new-conds))))
+    (let [new-cond-nodes (map atom (map create-cond-node new-conds))]
 
-    (dorun (map add-cond new-cond-nodes))
-    (dorun (map add-num-variables-to-cond
-                (map create-cond-variables new-cond-nodes))
+      (println)
+      (println "existing-conds: " existing-conds)
+      (println "new-conds: " new-conds)
+      (println "existing-cond-nodes: " existing-cond-nodes)
+      (println "new-cond-nodes: " new-cond-nodes)
+      (println)
+
+      (dorun (map add-cond new-cond-nodes))
+      (dorun (map add-num-variables-to-cond
+                  (map create-cond-variables new-cond-nodes))
+             )
+      (create-variables rslt-clauses)
+      (->> new-cond-nodes
+           (into existing-cond-nodes)
+           (graph-cond-clauses)
+           (graph-result-clauses rslt-clauses)
            )
-    (create-result-variables rslt-clauses)
-    (->> new-cond-nodes
-         (into existing-cond-nodes)
-         (graph-cond-clauses)
-         (graph-result-clauses rslt-clauses)
-         )
+      )
     )
   )
