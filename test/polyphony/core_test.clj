@@ -39,7 +39,8 @@
   (defrule ((= ?var4 10) (= ?var5 10) (= ?var6 10)) (()))
   (defrule ((= ?var7 10)) (()))
   (defrule ((= ?var7 10)) (()))
-  (defrule ((= ?var8 10)) (()))
+  (defrule ((= ?var9 10) (= ?var10 10)) (()))
+  (defrule ((= ?var8 10)) ((set-var ?var9 20) (set-var ?var10 25)))
   (defrule ((= ?var70 10) (= ?varx 100)) (()))
   (defrule ((= ?varx 100)) ((+ ?var71 10)))
   (defrule ((= ?var72 10)) ((set-var ?var72 11)))
@@ -159,8 +160,9 @@
 
 (deftest test-rule-with-multiple-results
   (testing "both results fire with multiple results"
-    (println "NOT IMPLEMENTED!! - test-rule-with-multiple-results")
-    (is (= 1 1))
+    (set-var ?var8 10)
+    (is (= @polyphony.variables/?var9 20))
+    (is (= @polyphony.variables/?var10 25))
     )
   )
 
