@@ -22,7 +22,7 @@
 
 (defn clear-polyphony
   []
-  (reset! polyphony.core/reset-num 0)
+  (reset! polyphony.core/reset-num (+ @polyphony.core/reset-num 1))
   (reset! polyphony.node-tree/all-conds {})
   (reset! polyphony.node-tree/all-joins {})
   (reset! polyphony.node-tree/all-results {})

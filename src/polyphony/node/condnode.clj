@@ -22,7 +22,7 @@
    )
   )
 
-(defrecord CondNode [id cond-clause compiled-clauses num-variables variables
+(defrecord CondNode [id cond-clause compiled-clause num-variables variables
                      outputs reset-num])
 
 (defn create-cond-node
@@ -48,13 +48,9 @@
 
   "
   [cond-node]
-  (let [new-clause (substitute-variable-vals (:cond-clause cond-node)
-                                             (:variables cond-node))]
-    (if (eval new-clause
-              )
-      true
-      false)
-    )
+  (if (:compiled-clause cond-node)
+    true
+    false)
   )
 
 (defn- send-output-val

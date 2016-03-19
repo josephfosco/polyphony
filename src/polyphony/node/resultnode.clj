@@ -44,7 +44,7 @@
 
 (defn- set-result-input-val
   [result-node val reset-num]
-  (assoc result-node :input-status val)
+  (assoc result-node :input-status val :reset-num reset-num)
   )
 
 (defn set-result-atom-input-val
