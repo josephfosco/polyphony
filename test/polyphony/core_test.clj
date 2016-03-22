@@ -52,6 +52,9 @@
   (defrule ((= ?var84 0)) (()))
   (defrule ((> ?var80 100) (= ?var83 ?var80)) ((set-var ?var84 10)))
   (defrule ((> ?var81 10) (= ?var82 10)) ((set-var ?var80 (- ?var81 10))))
+  (defrule ((= ?var85 10)) ((set-var ?var85 11)))
+  (defrule ((= ?var86 10) (= ?var87 10)) ((set-var ?var86 11)))
+  (defrule ((= ?var88 10)) ((set-var ?var88 11)))
   (f)
   )
 
@@ -219,5 +222,29 @@
     (set-var ?var82 10)
     (is (= 10 (get-var-val-from-node (get-cond-node-from-var '?var80) '?var80)))
     (is (= nil (get-var-val-from-node (get-cond-node-from-var '?var83) '?var83)))
+    )
+  )
+
+(deftest test-reset-num-set
+  (testing "reset-num set on cond nodes"
+    (reset-variable-vals)
+    (set-var ?var85 10)
+    (is (= (:reset-num (get-cond-node-from-var '?var85))
+           @polyphony.core/reset-num))
+    )
+  (testing "reset-num set on join nodes"
+    (reset-variable-vals)
+    (set-var ?var86 10)
+    (set-var ?var87 10)
+    (is (= (:reset-num (deref
+                        (first (:outputs (get-cond-node-from-var '?var86)))))
+           @polyphony.core/reset-num))
+    )
+  (testing "reset-num set on result nodes"
+    (reset-variable-vals)
+    (set-var ?var88 10)
+    (is (= (:reset-num (deref
+                        (first (:outputs (get-cond-node-from-var '?var88)))))
+           @polyphony.core/reset-num))
     )
   )
