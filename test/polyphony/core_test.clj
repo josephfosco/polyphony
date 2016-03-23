@@ -54,7 +54,10 @@
   (defrule ((> ?var81 10) (= ?var82 10)) ((set-var ?var80 (- ?var81 10))))
   (defrule ((= ?var85 10)) ((set-var ?var85 11)))
   (defrule ((= ?var86 10) (= ?var87 10)) ((set-var ?var86 11)))
-  (defrule ((= ?var88 10)) ((set-var ?var88 11)))
+  (defrule ((= ?var88 10)) (()))
+  (defrule ((= ?var89 10)) ((set-var ?var88 11)))
+  (defrule ((= ?var90 10)) (()))
+  (defrule ((= ?var91 10) (= ?var92 10)) ((set-var ?var90 11)))
   (f)
   )
 
@@ -242,9 +245,27 @@
     )
   (testing "reset-num set on result nodes"
     (reset-variable-vals)
-    (set-var ?var88 10)
+    (set-var ?var89 10)
     (is (= (:reset-num (deref
                         (first (:outputs (get-cond-node-from-var '?var88)))))
            @polyphony.core/reset-num))
     )
+  )
+
+(deftest test-fire-rule-after-reset
+  (testing "check rules fire correctly after a reset"
+    (set-var ?var90 15)
+    (is (=  @polyphony.variables/?var90 15))
+    (set-var ?var91 10)
+    (set-var ?var92 10)
+    (is (=  @polyphony.variables/?var90 11))
+    (reset-variable-vals)
+    (set-var ?var90 20)
+    (set-var ?var91 10)
+    (is (=  @polyphony.variables/?var90 20))
+    (set-var ?var90 21)
+    (is (=  @polyphony.variables/?var90 21))
+    (set-var ?var92 10)
+    (is (=  @polyphony.variables/?var90 11))
+   )
   )
