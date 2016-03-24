@@ -42,7 +42,6 @@
 
 (defn set-join-output-node
   [join-node output-node]
-  (println join-node output-node)
   (assoc join-node :output-node output-node)
   )
 

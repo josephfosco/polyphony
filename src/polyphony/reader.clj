@@ -66,7 +66,6 @@
 
 (defn create-variables
   [clauses]
-  (println)
   (println "create-variables " clauses)
   (dorun (for [clause clauses]
            (find-variables clause)))
@@ -76,7 +75,6 @@
   "cond-var-list - a list containing a cond-node as an atom and
    a list of vars in the cond"
   [cond-var-list]
-  (println "add-variables-to-cond: " cond-var-list)
   (reset! (first cond-var-list)
           (set-cond-num-variables
             (deref (first cond-var-list))
@@ -99,9 +97,6 @@
 
 (defn- create-joins
   [join-node-as-atom cond-nodes-as-atoms]
-  (println)
-  (println "create-joins " join-node-as-atom cond-nodes-as-atoms)
-  (println)
   (let [new-join (when (seq cond-nodes-as-atoms)
                    (atom (create-join-node
                           (:id (deref (first cond-nodes-as-atoms))))))]

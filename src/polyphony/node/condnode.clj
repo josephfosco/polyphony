@@ -17,8 +17,7 @@
   (:require
    [polyphony.node.joinnode :refer [set-join-atom-input-val]]
    [polyphony.node.resultnode :refer [set-result-atom-input-val]]
-   [polyphony.utils :refer [compile-clauses is-variable? substitute-variable-vals
-                            sym-to-key]]
+   [polyphony.utils :refer [compile-clauses is-variable? sym-to-key]]
    )
   )
 

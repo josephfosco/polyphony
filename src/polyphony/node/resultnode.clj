@@ -15,7 +15,7 @@
 
 (ns polyphony.node.resultnode
   (:require
-   [polyphony.utils :refer [compile-clauses substitute-result-variable-vals]]
+   [polyphony.utils :refer [compile-clauses]]
    )
   )
 

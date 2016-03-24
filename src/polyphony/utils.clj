@@ -54,7 +54,8 @@
                      (list 'fn [] clause-with-atoms)
                      )
         ]
-    (println "clause-to-fn " clause-with-atoms (= (first clause) 'set-var))
+    (println "clause-to-fn with-atoms: " clause-with-atoms (= (first clause)
+                                                              'set-var))
     (println "clause-to-fn new-clause: " new-clause)
     new-clause
     )
@@ -62,38 +63,7 @@
 
 (defn compile-clauses
   [clauses]
-  (println "compile-clauses: " clauses)
   (doall (for [clause clauses]
            (let [new-clause (clause-to-fn clause)]
-             (println "compile-clauses: " new-clause)
              (eval new-clause))))
-  )
-
-(defn substitute-variable-vals
-  [clause variable-dict]
-  (doall (for [elem clause]
-           (if (is-variable? elem)
-             ((keyword (name elem)) variable-dict)
-             elem
-             )
-           ))
-  )
-
-(declare substitute-result-variable-vals)
-(defn subst-var
-  [elem variable-dict clause-vec ndx]
-  (cond (and  (is-variable? elem) (not (.endsWith (name (get clause-vec
-                                                             (dec ndx)))
-                                                  "set-var")))
-        ((keyword (name elem)) variable-dict)
-        (seq? elem)
-        (substitute-result-variable-vals elem variable-dict)
-        :else
-        elem
-    )
-  )
-
-(defn substitute-result-variable-vals
-  [clause variable-dict]
-  (map subst-var clause (repeat variable-dict) (repeat (vec clause)) (range))
   )
