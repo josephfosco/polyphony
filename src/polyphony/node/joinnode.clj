@@ -62,14 +62,14 @@
 
 (defn set-join-input-val
   [join-node input-id val reset-num]
-  (let [reset-join-node (if (= reset-num (:reset-num join-node))
-                          join-node
-                          (reset-join-node join-node reset-num))
+  (let [reset-node (if (= reset-num (:reset-num join-node))
+                     join-node
+                     (reset-join-node join-node reset-num))
         ]
     (cond (= (:left-input-id join-node) input-id)
-          (assoc reset-join-node :left-input-status val)
+          (assoc reset-node :left-input-status val)
           (= (:right-input-id join-node) input-id)
-          (assoc reset-join-node :right-input-status val)
+          (assoc reset-node :right-input-status val)
           :else (throw (Throwable. "InvalidJoinNodeId"))
           )
     )
@@ -77,7 +77,8 @@
 
 (defn set-join-atom-input-val
   [join-node-atom input-id val reset-num]
-  (let [new-join-node (reset! join-node-atom (set-join-input-val @join-node-atom input-id val reset-num))]
+  (let [new-join-node (reset! join-node-atom
+                              (set-join-input-val @join-node-atom input-id val reset-num))]
     (when (and (= (:left-input-status new-join-node) true)
                (= (:right-input-status new-join-node) true)
                )

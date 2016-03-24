@@ -42,13 +42,12 @@
   )
 
 (defn- eval-cond-node
-  "replace all variables in cond-clause with their value and
-     eval the resulting expression
+  " eval compiled cond clause
    Returns: true or false
 
   "
   [cond-node]
-  (if (:compiled-clause cond-node)
+  (if ((first (:compiled-clause cond-node)))
     true
     false)
   )
