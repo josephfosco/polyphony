@@ -15,6 +15,26 @@
 
 (ns polyphony.utils)
 
+(def log-to-console? (atom false))
+
+
+(defn log-to-console
+  [& msgs]
+  (if @log-to-console?
+    (binding [*print-readably* nil]
+      (apply prn msgs)
+      ))
+  )
+
+(defn set-log-to-console?
+  [val]
+  (reset! log-to-console? val)
+  )
+
+(defn get-log-to-console?
+  []
+  @log-to-console?)
+
 (defn is-variable?
   [var-name]
   (and (= (type var-name) clojure.lang.Symbol)
@@ -28,7 +48,7 @@
 
 (defn check-atom
   [elem]
-  (println "check-atom: " elem)
+  (log-to-console "check-atom: " elem)
   (if (is-variable? elem)
     `(deref ~(symbol (str "polyphony.variables/" (name elem))))
     elem
@@ -37,7 +57,7 @@
 (declare clause-to-fn)
 (defn subst-atoms-for-vars
   [clause]
-  (println "subst-atoms-for-vars clause: " clause)
+  (log-to-console "subst-atoms-for-vars clause: " clause)
   (doall (for [elem clause]
            (cond (= (type elem) java.lang.String) (str "\"" elem "\"")
                  (seq? elem) (clause-to-fn elem)
@@ -47,16 +67,16 @@
 
 (defn clause-to-fn
   [clause]
-  (println "clause-to-fn: " clause)
+  (log-to-console "clause-to-fn: " clause)
   (let [clause-with-atoms (subst-atoms-for-vars clause)
         new-clause (if (= (first clause) 'set-var)
                      (list 'fn [] (conj (rest clause) 'polyphony.core/set-var))
                      (list 'fn [] clause-with-atoms)
                      )
         ]
-    (println "clause-to-fn with-atoms: " clause-with-atoms (= (first clause)
-                                                              'set-var))
-    (println "clause-to-fn new-clause: " new-clause)
+    (log-to-console "clause-to-fn with-atoms: " clause-with-atoms (= (first clause)
+                                                                     'set-var))
+    (log-to-console "clause-to-fn new-clause: " new-clause)
     new-clause
     )
   )

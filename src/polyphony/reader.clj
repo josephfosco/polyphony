@@ -22,7 +22,7 @@
    [polyphony.node-tree :refer [add-cond find-id-for-clause add-join
                                 get-cond-node add-result]]
    [polyphony.node.resultnode :refer [create-result-node]]
-   [polyphony.utils :refer [is-variable?]]
+   [polyphony.utils :refer [is-variable? log-to-console]]
    [polyphony.variables :refer [add-variable]]
    )
   )
@@ -41,12 +41,12 @@
 (declare find-variables)
 (defn add-vars
   [elem clause-vec ndx]
-  (println "add-vars: " elem)
+  (log-to-console "add-vars: " elem)
   (cond (and  (is-variable? elem) (not (.endsWith (name (get clause-vec
                                                              (dec ndx)))
                                                   "set-var")))
         (do
-          (println "adding var: " elem)
+          (log-to-console "adding var: " elem)
           (add-variable elem nil)
           )
         (seq? elem)
@@ -56,7 +56,7 @@
 
 (defn find-variables
   [clause]
-  (println "find-variables clause: " clause)
+  (log-to-console "find-variables clause: " clause)
   (dorun (map add-vars
               clause
               (repeat (vec clause))
@@ -66,7 +66,7 @@
 
 (defn create-variables
   [clauses]
-  (println "create-variables " clauses)
+  (log-to-console "create-variables " clauses)
   (dorun (for [clause clauses]
            (find-variables clause)))
   )
@@ -146,7 +146,7 @@
 
 (defn- graph-result-clauses
   [rslt-clauses input-clause-atom]
-  (println "graph-result-clauses")
+  (log-to-console "graph-result-clauses")
   (let [rslt (atom (create-result-node (:id @input-clause-atom) rslt-clauses))]
     (add-result rslt)
     (cond (.startsWith (name (:id @input-clause-atom)) "C")
@@ -170,12 +170,12 @@
     (create-variables (doall (map list (map second new-conds))))
     (let [new-cond-nodes (map atom (map create-cond-node new-conds))]
 
-      (println)
-      (println "existing-conds: " existing-conds)
-      (println "new-conds: " new-conds)
-      (println "existing-cond-nodes: " existing-cond-nodes)
-      (println "new-cond-nodes: " new-cond-nodes)
-      (println)
+      (log-to-console)
+      (log-to-console "existing-conds: " existing-conds)
+      (log-to-console "new-conds: " new-conds)
+      (log-to-console "existing-cond-nodes: " existing-cond-nodes)
+      (log-to-console "new-cond-nodes: " new-cond-nodes)
+      (log-to-console)
 
       (dorun (map add-cond new-cond-nodes))
       (dorun (map add-num-variables-to-cond

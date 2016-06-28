@@ -17,7 +17,7 @@
   (:require
    [polyphony.node.joinnode :refer [set-join-atom-input-val]]
    [polyphony.node.resultnode :refer [set-result-atom-input-val]]
-   [polyphony.utils :refer [compile-clauses is-variable? sym-to-key]]
+   [polyphony.utils :refer [compile-clauses is-variable? log-to-console sym-to-key]]
    )
   )
 
@@ -30,7 +30,7 @@
    id-and-clause - a list with the first element the id for the
                    clause, and the second element the clause"
   [id-and-clause]
-  (println "create-cond-node: " id-and-clause)
+  (log-to-console "create-cond-node: " id-and-clause)
   (CondNode. (first id-and-clause) (second id-and-clause)
              (compile-clauses (list (second id-and-clause))) nil {} () 0)
   )

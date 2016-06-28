@@ -16,7 +16,7 @@
 (ns polyphony.version)
 
 (def POLYPHONY-VERSION {:major 1
-                        :minor 1
+                        :minor 2
                         :patch 0
                         :development false})
 
