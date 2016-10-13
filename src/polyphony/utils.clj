@@ -15,15 +15,15 @@
 
 (ns polyphony.utils)
 
-(def log-to-console? (atom false))
-
+(def ^:private log-to-console? (atom false))
 
 (defn log-to-console
   [& msgs]
-  (if @log-to-console?
+  (when @log-to-console?
     (binding [*print-readably* nil]
       (apply prn msgs)
       ))
+  nil
   )
 
 (defn set-log-to-console?

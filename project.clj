@@ -13,7 +13,7 @@
 ;    You should have received a copy of the GNU General Public License
 ;    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(defproject polyphony "1.2.0"
+(defproject polyphony "1.3.0"
   :description "Polyphony - a basic rule engine"
   :url "https://github.com/josephfosco/polyphony"
   :license {:name "GNU General Public License version 3"
