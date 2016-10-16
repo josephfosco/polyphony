@@ -33,7 +33,7 @@
 
 (defn add-variable
   [variable-name node-atom]
-  (if (not (nil? node-atom))
+  (if node-atom
     (swap! all-variables new-variable variable-name node-atom))
   (intern (ns-name 'polyphony.variables) variable-name (atom nil))
   variable-name

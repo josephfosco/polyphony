@@ -23,17 +23,12 @@
     (binding [*print-readably* nil]
       (apply prn msgs)
       ))
-  nil
   )
 
 (defn set-log-to-console?
   [val]
   (reset! log-to-console? val)
   )
-
-(defn get-log-to-console?
-  []
-  @log-to-console?)
 
 (defn is-variable?
   [var-name]

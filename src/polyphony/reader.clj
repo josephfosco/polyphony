@@ -83,16 +83,16 @@
 
 (defn get-existing-conds
   [cond-clauses]
-  (filter #(not (nil? %)) (map find-id-for-clause cond-clauses))
+  (doall (remove nil? (map find-id-for-clause cond-clauses)))
   )
 
 (defn new-clause
   [clauses]
-  (filter #(not (nil? %))
-          (map  #(when (not (find-id-for-clause %))
-                   (list (gensym 'C_) %)
-                   )
-                clauses))
+  (doall (remove nil?
+                 (map #(when (not (find-id-for-clause %))
+                         (list (gensym 'C_) %)
+                         )
+                      clauses)))
   )
 
 (defn- create-joins
