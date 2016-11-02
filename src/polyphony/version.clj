@@ -17,7 +17,7 @@
 
 (def POLYPHONY-VERSION {:major 1
                         :minor 3
-                        :patch 0
+                        :patch 1
                         :development false})
 
 (def POLYPHONY-VERSION-STR
